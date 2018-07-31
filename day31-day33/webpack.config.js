@@ -10,7 +10,7 @@ const config = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/bundle.js'
   },
-  plugins: [                                // 【2】添加了插件选项
+  plugins: [                                
     new HtmlWebpackPlugin({
       filename: 'index.html',// 生成文件名
       template: './src/index.html', // 模板文件

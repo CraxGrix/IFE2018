@@ -13,7 +13,6 @@ function addLoadEvent(func) {
 	}
 }
 
-
 function registrationEvent() {
     let regionWrapper = document.getElementById("region-radio-wrapper")
     regionWrapper.onclick = event => {

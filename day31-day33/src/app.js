@@ -1,18 +1,33 @@
 import updataTable from './script/table'
+import {check} from './script/utils'
+
+function addLoadEvent(func) {
+	var oldonload = window.onload;
+	if (typeof window.onload != "function") {
+		window.onload = func;
+	} else {
+		window.onload = function() {
+			oldonload();
+			func();
+		}
+	}
+}
+
 
 function registrationEvent() {
     let regionWrapper = document.getElementById("region-radio-wrapper")
     regionWrapper.onclick = event => {
         checkboxSelect(event, 'region') 
+        updataTable()
     }
     let productWrapper = document.getElementById("product-radio-wrapper")
     productWrapper.onclick = event => {
         checkboxSelect(event, 'product')
+        updataTable()
     }
     function checkboxSelect(event, name) {
         let regionCheckBox = document.getElementsByName(name)
         if (event.target.type === "checkbox") {
-            log(event.target.id)
             if (event.target.id === "all") {
                 if (event.target.checked === true) {
                     for (let i = 1; i < regionCheckBox.length; i++) {
@@ -31,7 +46,8 @@ function registrationEvent() {
                 }
             }
         }
-        updataTable()
     }
 }
+
+addLoadEvent(registrationEvent())
 

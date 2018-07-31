@@ -2,7 +2,6 @@
   "name": "day31-day33",
   "version": "1.0.0",
   "description": "",
-  "main": "src/test.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cross-env NODE_ENV=production webpack --config webpack.config.js",

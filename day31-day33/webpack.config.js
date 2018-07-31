@@ -5,7 +5,7 @@ var webpack = require('webpack')
 const isDev = process.env.NODE_ENV === 'development'
 
 const config = {
-  entry: './src/test.js',
+  entry: './src/app.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/bundle.js'

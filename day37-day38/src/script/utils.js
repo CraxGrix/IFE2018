@@ -2,7 +2,7 @@
  * 返回节点数组Checked总数
  * @param {NodeList} nodeList 当前种类CheckBox的节点数组，不包含All。
  */
-function check(nodeList) {
+function check (nodeList) {
   let j = 0
   for (let i = 1; i < nodeList.length; i++) {
     if (nodeList[i].checked === true) {
@@ -18,7 +18,7 @@ function check(nodeList) {
  * @param {Number} productNum product option 已选中数量
  *
  */
-function rowSpanCount(regionNum, productNum) {
+function rowSpanCount (regionNum, productNum) {
   if (regionNum === 0 || productNum === 0) {
     return 1
   } else if (regionNum === productNum) {
@@ -28,33 +28,28 @@ function rowSpanCount(regionNum, productNum) {
   }
 }
 
-function getElementLeft(element) {　　　　
-  var actualLeft = element.offsetLeft;　　　　
-  var current = element.offsetParent;
+function getElementLeft (element) {
+  var actualLeft = element.offsetLeft
+  var current = element.offsetParent
 
-  　　　　
-  while (current !== null) {　　　　　　
-    actualLeft += current.offsetLeft;　　　　　　
-    current = current.offsetParent;　　　　
+  while (current !== null) {
+    actualLeft += current.offsetLeft
+    current = current.offsetParent
   }
 
-  　　　　
-  return actualLeft;　　
+  return actualLeft
 }
 
-　　
-function getElementTop(element) {　　　　
-  var actualTop = element.offsetTop;　　　　
-  var current = element.offsetParent;
+function getElementTop (element) {
+  var actualTop = element.offsetTop
+  var current = element.offsetParent
 
-  　　　　
-  while (current !== null) {　　　　　　
-    actualTop += current.offsetTop;　　　　　　
-    current = current.offsetParent;　　　　
+  while (current !== null) {
+    actualTop += current.offsetTop
+    current = current.offsetParent
   }
 
-  　　　　
-  return actualTop;　　
+  return actualTop
 }
 
 export {

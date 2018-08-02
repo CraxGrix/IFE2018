@@ -1,9 +1,8 @@
 import updataTable from './script/table'
 import {check, getElementLeft, getElementTop} from './script/utils'
 
-const log = console.log.bind(console)
-// 用该值来存储input内修改后的内容
-let curValue = ""
+let curValue = ''
+let curNode = ''
 function addLoadEvent (func) {
   var oldonload = window.onload
   if (typeof window.onload !== 'function') {
@@ -15,7 +14,6 @@ function addLoadEvent (func) {
     }
   }
 }
-
 function registrationCheckBoxEvent () {
   let regionWrapper = document.getElementById('region-radio-wrapper')
   let productWrapper = document.getElementById('product-radio-wrapper')
@@ -56,92 +54,81 @@ addLoadEvent(registrationCheckBoxEvent)
 addLoadEvent(selectAll)
 addLoadEvent(registrationEditEvent)
 
-function selectAll() {
-  let inputNodeList = document.getElementsByTagName("input")
-  for(let i = 0; i < inputNodeList.length; i++) {
-    if(inputNodeList[i].id === "all") {
+function selectAll () {
+  let inputNodeList = document.getElementsByTagName('input')
+  for (let i = 0; i < inputNodeList.length; i++) {
+    if (inputNodeList[i].id === 'all') {
       inputNodeList[i].click()
     }
   }
 }
 
 function registrationEditEvent () {
-  let tableNode = document.getElementById("table")
+  let tableNode = document.getElementById('table')
   tableNode.onclick = event => {
-    if(document.getElementById("edit-wrapper") && !(event.target.getAttribute("class") === "sale-number")) {
+    if (document.getElementById('edit-wrapper') && !(event.target.getAttribute('class') === 'sale-number')) {
       hideEditButtion()
     }
-    if(event.target.getAttribute("class") === "sale-number") {
+    if (event.target.getAttribute('class') === 'sale-number') {
       let tdNode = event.target
       let input = document.createElement('input')
-      log(event.target)
-      input.style.width = tdNode.offsetWidth + "px"
-      input.style.height = tdNode.offsetHeight + "px"
-      input.style.position = "relative"
+      input.style.width = tdNode.offsetWidth + 'px'
+      input.style.height = tdNode.offsetHeight + 'px'
+      input.style.position = 'relative'
       input.value = tdNode.innerText
-      input.addEventListener("focus", event => {
-        if(document.getElementById("edit-wrapper")) {
+      input.addEventListener('focus', event => {
+        if (document.getElementById('edit-wrapper')) {
           hideEditButtion()
         }
         showEditButton(event.target)
-        
       })
-      input.addEventListener("blur", event => {
+      input.addEventListener('blur', event => {
+        curNode = tdNode
         input.parentNode.replaceChild(tdNode, input)
       })
-      input.addEventListener("click", event => {
+      input.addEventListener('click', event => {
         event.stopPropagation()
       })
-      input.addEventListener("change", event => {
+      // change事件会在input值改变时将值赋给curValue
+      input.addEventListener('change', event => {
         curValue = event.target.value
       })
-      /**input.addEventListener("click", (event) => {
-        event.target.firstChild.focus()
-        //let editWrapperNode = document.getElementById("edit-wrapper")
-        //editWrapperNode.parentNode.removeChild(editWrapperNode)
-        //fromNode.parentNode.replaceChild(tdNode, fromNode)
-      })
-      //input.addEventListener("focus", (event) => {
-        //showEditButton(event.target)
-      //})
-      */
-      
       tdNode.parentNode.replaceChild(input, tdNode)
       input.focus()
     }
   }
 }
 function showEditButton (inputNode) {
-  let editWrapper = document.createElement("div")
-  editWrapper.setAttribute("id", "edit-wrapper")
-  let determineBtn = document.createElement("button")
-  determineBtn.addEventListener("click", (event) => {
-    // TODO尚未解决丢失焦点后无法获取td节点的问题
-    log(event.target.parentNode)
+  let editWrapper = document.createElement('div')
+  editWrapper.setAttribute('id', 'edit-wrapper')
+  let determineBtn = document.createElement('button')
+  determineBtn.addEventListener('click', (event) => {
+    // 当按下确定时会将curValue更新到实际节点
+    curNode.innerHTML = curValue
   })
-  determineBtn.style.display = "block"
-  determineBtn.innerHTML = "保存"
-  let cancelBtn = document.createElement("button")
-  cancelBtn.style.display = "block"
-  cancelBtn.innerHTML = "取消"
-  cancelBtn.addEventListener("click", event => {
+  determineBtn.style.display = 'block'
+  determineBtn.innerHTML = '保存'
+  let cancelBtn = document.createElement('button')
+  cancelBtn.style.display = 'block'
+  cancelBtn.innerHTML = '取消'
+  cancelBtn.addEventListener('click', event => {
     event.target.parentNode.parentNode.removeChild(event.target.parentNode)
-    curValue = ""
+    curValue = ''
   })
   editWrapper.appendChild(determineBtn)
   editWrapper.appendChild(cancelBtn)
-  editWrapper.style.position = "fixed"
-  editWrapper.style.left = (getElementLeft(inputNode) + inputNode.offsetWidth) +  "px"
-  editWrapper.style.top = getElementTop(inputNode) - inputNode.offsetHeight / 4 + "px"
-  if(inputNode.nextSibling) {
+  editWrapper.style.position = 'fixed'
+  editWrapper.style.left = (getElementLeft(inputNode) + inputNode.offsetWidth) + 'px'
+  editWrapper.style.top = getElementTop(inputNode) - inputNode.offsetHeight / 4 + 'px'
+  if (inputNode.nextSibling) {
     inputNode.parentNode.insertBefore(editWrapper, inputNode.nextSibling)
   } else {
     inputNode.parentNode.appendChild(editWrapper)
   }
 }
 
-function hideEditButtion() {
-  curValue = ""
-  let node = document.getElementById("edit-wrapper")
+function hideEditButtion () {
+  curValue = ''
+  let node = document.getElementById('edit-wrapper')
   node.parentNode.removeChild(node)
 }

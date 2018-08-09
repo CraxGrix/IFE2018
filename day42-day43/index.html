@@ -1,0 +1,72 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <script>
+        //ES5
+        function Restaurant(argObj) {
+            this.cash = argObj.cash
+            this.seats = argObj.seats
+            this.staff = argObj.staff
+
+            Restaurant.prototype.hire = function(obj) {
+                this.staff.push(obj)
+            }
+            Restaurant.prototype.fire = function(obj) {
+                if(this.staff.indexOf(obj != -1)) {
+                    this.staff.splice(this.staff.indexOf(obj), 1)
+                    console.log("fired")
+                } else {
+                    console.log("Don`t find this staff")
+                }
+            }
+        }
+
+        function Staff(name, salary) {
+            this.name = name
+            this.salary = salary
+
+            Staff.prototype.work = function() {
+
+            }
+        }
+
+        function Waiter(id, name, salary) {
+            Staff.call(this, id, name, salary)
+
+            Waiter.prototype.work = function(arg) {
+                if (arg instanceof Array) {
+                    //Record dishes
+                } else {
+                    //Serving dishes
+                }
+            }
+        }
+        function Chef(id, name, salary) {
+            Staff.call(this, id, name, salary)
+
+            Chef.prototype.work = function() {
+                //cooking
+            }
+        }
+
+        function Customer() {
+            Customer.prototype.orderDishes = function() {
+
+            }
+            Customer.prototype.eat = function() {
+
+            }
+        }
+
+        function Dishes(name, cost, price) {
+            this.name = name
+            this.cost = cost
+            this.price = price
+        }
+    </script>
+</body>
+
+</html>

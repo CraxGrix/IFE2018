@@ -1,0 +1,346 @@
+<html>
+
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #bg {
+            height: 500px;
+            width: 700px;
+            border: 1px solid black;
+        }
+
+        #kitchen-bg {
+            height: 500px;
+            width: 100px;
+            border-right: 1px solid black
+        }
+
+        .chef {
+            height: 20px;
+            background: gray;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .dishes-list {
+            position: relative;
+            display: inline-block;
+            height: 100px;
+            width: 70px;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            overflow: scroll;
+            overflow-x: hidden;
+            font-size: 12px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            background-color: #F5F5F5;
+        }
+
+        .scrollbar::-webkit-scrollbar {
+            width: 6px;
+            background-color: #F5F5F5;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+            background-color: #555;
+        }
+
+        #take-meal-bg {
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            background: #555;
+            top: 200px;
+            left: 101px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        #seat-bg {
+            position: absolute;
+            left: 200px;
+            top: 50px;
+            width: 400px;
+            height: 400px;
+            border: 1px solid black;
+        }
+        
+        .seat {
+            float: left;
+            height: 10px;
+            width: 30px;
+            margin: 10px;
+            border: 1px solid black;
+        }
+        .seat-sit {
+            background: goldenrod;
+        }
+        #restaurant-info {
+            height: 100px;
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bg">
+        <div id="kitchen-bg">
+            <div class="chef">Bob(空闲)</div>
+        </div>
+        <div id="wait-cooking-list" class="dishes-list scrollbar">
+            TODO:
+            <ul>
+                <li>鱼香肉丝</li>
+                <li>鱼香肉丝</li>
+                <li>鱼香肉丝</li>
+                <li>鱼香肉丝</li>
+                <li>鱼香肉丝</li>
+                <li>鱼香肉丝</li>
+
+            </ul>
+        </div>
+        <div id="take-meal-list" class="dishes-list scrollbar">
+            Cooked:
+                <ul>
+                        <li>鱼香肉丝</li>
+                        <li>鱼香肉丝</li>
+                        <li>鱼香肉丝</li>
+                        <li>鱼香肉丝</li>
+                        <li>鱼香肉丝</li>
+                        <li>鱼香肉丝</li>
+        
+                    </ul>
+        </div>
+        <div id="take-meal-bg">
+            取餐处
+        </div>
+
+        <div id="seat-bg">
+            <div class="seat"></div>
+            <div class="seat"></div>
+            <div class="seat"></div>
+            <div class="seat"></div>
+        </div>
+
+        <div id="restaurant-info">
+            <p>餐厅金额：</p>
+        </div>
+    </div>
+    <script>
+        /**
+                        ES5
+                        function Restaurant(argObj) {
+                            this.cash = argObj.cash
+                            this.seats = argObj.seats
+                            this.staff = argObj.staff
+
+                            Restaurant.prototype.hire = function(obj) {
+                                this.staff.push(obj)
+                            }
+                            Restaurant.prototype.fire = function(obj) {
+                                if(this.staff.indexOf(obj != -1)) {
+                                    this.staff.splice(this.staff.indexOf(obj), 1)
+                                    console.log("fired")
+                                } else {
+                                    console.log("Don`t find this staff")
+                                }
+                            }
+                        }
+
+                        function Staff(name, salary) {
+                            this.name = name
+                            this.salary = salary
+
+                            Staff.prototype.work = function() {
+
+                            }
+                        }
+
+                        function Waiter(id, name, salary) {
+                            Staff.call(this, id, name, salary)
+
+                            Waiter.prototype.work = function(arg) {
+                                if (arg instanceof Array) {
+                                    //Record dishes
+                                } else {
+                                    //Serving dishes
+                                }
+                            }
+                        }
+                        function Chef(id, name, salary) {
+                            Staff.call(this, id, name, salary)
+
+                            Chef.prototype.work = function() {
+                                //cooking
+                            }
+                        }
+
+                        function Customer() {
+                            Customer.prototype.orderDishes = function() {
+
+                            }
+                            Customer.prototype.eat = function() {
+
+                            }
+                        }
+
+                        function Dishes(name, cost, price) {
+                            this.name = name
+                            this.cost = cost
+                            this.price = price
+                        }
+                        */
+        /**
+         * 
+         const log = console.log.bind(console)
+
+
+         class Restaurant {
+             constructor(cash, seats, staff) {
+                 this.cash = cash
+                 this.seats = seats
+                 this.staff = staff
+             }
+             hire(staffObj) {
+                 this.staff.push(staffObj)
+             }
+             fire(staffObj) {
+
+             }
+         }
+
+         class SingletonChef {
+             constructor(name, salary) {
+                 this.name = name
+                 this.salary = salary
+             }
+             work(dishesName) {
+                 //cooking
+                 let handle = setInterval(() => {
+                     log("正在烹饪" + dishesName)
+                 }, 1000)
+
+                 setTimeout((handle) => {
+                     clearInterval(handle)
+                     log("烹饪完毕，请上菜")
+                     waiter.work(dishesName)
+                 }, 5000, handle)
+             }
+             static getSingletonChef(name, salary) {
+                 if(!this.instance) {
+                     this.instance = new SingletonChef(name, salary)
+                 }
+                 return this.instance
+             }
+         }
+
+         class SingletonWaiter {
+             constructor(name, salary) {
+                 this.name = name
+                 this.salary = salary
+             }
+             work(arg) {
+                 if (arg instanceof Array) {
+                     //Record dishes
+                     log("请问您想要吃些什么？")
+                 } else {
+                     //Serving dishes
+                     log("这是您的" + arg + "请慢用")
+                     customerQueue[0].eat()
+
+                 }
+             }
+             order(dishesName) {
+                 log("正在下单" + dishesName)
+                 cook.work(dishesName)
+             }
+             static getSingletonWaiter(name, salary) {
+                 if(!this.instance) {
+                     this.instance = new SingletonWaiter(name, salary)
+                 }
+                 return this.instance
+             }
+         }
+
+         class Customer {
+             constructor(index){
+                 this.name = index
+             }
+             orderDishes() {
+                 waiter.work([])
+                 let dishesName = DISHESMENU.order()
+                 log("你好，我要一份" + dishesName)
+                 waiter.order(dishesName)
+             }
+
+             eat() {
+                 let handle = setInterval(() => {
+                     log("正在吃饭")
+                 }, 1000)
+                 setTimeout((handle) => {
+                     clearInterval(handle)
+                     log("吃完了")
+                     customerQueue.splice(0, 1)
+                     ++IFERESTAURANT.seats
+                 }, 5000, handle)
+             }
+             
+             sittingDown() {
+                 log("第" + this.name + "位顾客坐下了")
+                 --IFERESTAURANT.seats
+                 this.orderDishes()
+             }
+         }
+
+         class Dishes {
+             constructor(arg){
+                 this.menu = arg
+             }
+
+             order() {
+                 let randomNum = Math.floor(Math.random() * Object.keys(this.menu).length)
+                 return Object.keys(this.menu)[randomNum]
+             }
+         }
+
+         const DISHESMENU = new Dishes({
+             '鱼香肉丝': 20,
+             '红烧茄子': 15,
+             '麻婆豆腐': 22,
+             '糖醋里脊': 30,
+             '白切鸡': 33,
+             '佛跳墙': 55.
+         })
+         
+         const IFERESTAURANT = new Restaurant(10000, 1, [])
+
+         let cook =  SingletonChef.getSingletonChef("Tomy", 10000)
+         let waiter = SingletonWaiter.getSingletonWaiter("Bob", 2000)
+         IFERESTAURANT.hire(waiter)
+         IFERESTAURANT.hire(cook)
+         let customerQueue = []
+         for(let i = 1; i < 10; i++) {
+             let customre = new Customer(i)
+             customerQueue.push(customre)
+         }
+         setInterval(() => {
+             if(IFERESTAURANT.seats) {
+                 customerQueue[0].sittingDown()
+                 log("后面还有" + (customerQueue.length - 1) + "位顾客")
+             }
+         }, 1000)
+         */
+    </script>
+</body>
+
+</html>

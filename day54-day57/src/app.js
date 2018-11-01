@@ -3,13 +3,19 @@ import Footballer from './script/Footballer'
 
 const log = console.log.bind(console)
 const COURSESPECIFICATION = {
+    site: {
+        type: 'site',
+        fillStyle: 'green',
+        size: [0, 0, 700, 550],
+    },
     wh: {
         size: [50, 50, 105 * 5, 68 * 5],
         type: 'rectangular',
     },
     leftHalf: {
         type: 'rectangular',
-    }[50, 50, 262.5, 340],
+        size: [50, 50, 262.5, 340],
+    },
     topLeftCornerFlagArc: {
         type: 'circle',
         size: [50, 50, 5, 0.5 * Math.PI, 2 * Math.PI, true],
@@ -69,7 +75,7 @@ const COURSESPECIFICATION = {
 
 class Game {
     constructor() {
-        this.canvas = document.getElementById("canvas")
+        this.canvas = document.getElementById("canvas-bg")
         this.context = this.canvas.getContext("2d")
         this.ratio = (window.devicePixelRatio || 1) / (this.context.backingStorePixelRatio ||
             this.context.webkitBackingStorePixelRatio ||
@@ -82,56 +88,52 @@ class Game {
         this.canvas.width = this.canvas.width * this.ratio
         this.canvas.height = this.canvas.height * this.ratio
         this.context.scale(this.ratio, this.ratio)
-        this.drawStrategies = {
-            'site': function(obj) {
-                console.log(this.context)
-                // TODO FIX this指向可能出错
-                this.context.fillStyle = obj.config.fillStyle
-                this.context.strokeStyle = obj.config.strokeStyle
-                this.context.fillRect(...obj.config.size)
-            },
-            'rectangular': function(obj) {
-                this.context.strokeStyle = 'white'
-                this.context.lineWidth = 2
-                this.context.strokeRect(...obj.size)
-            },
-            'circle': function(obj) {
-                this.context.strokeStyle = 'white'
-                this.context.lineWidth = 2
-                this.context.beginPath()
-                this.context.arc(...obj.size)
-                this.context.stroke()
-                this.context.closePath()
-            },
-            'solid': function(obj) {
-                this.context.fillStyle = obj.config.fillStyle
-                this.context.beginPath()
-                this.context.arc(...obj.config.size)
-                this.context.fill()
-                this.context.closePath()
+        this.drawStrategies = (function (context) {
+            return {
+                'site': function (obj) {
+                    context.fillStyle = obj.fillStyle
+                    context.fillRect(...obj.size)
+                },
+                'rectangular': function (obj) {
+                    context.strokeStyle = 'white'
+                    context.lineWidth = 2
+                    context.strokeRect(...obj.size)
+                },
+                'circle': function (obj) {
+                    context.strokeStyle = 'white'
+                    context.lineWidth = 2
+                    context.beginPath()
+                    context.arc(...obj.size)
+                    context.stroke()
+                    context.closePath()
+                },
+                'solid': function (obj) {
+                    context.beginPath()
+                    context.fillStyle = obj.config.fillStyle || 'red'
+                    context.arc(obj.x, obj.y, 10, 0, 2 * Math.PI)
+                    context.fill()
+                    context.closePath()
+                }
             }
-        }
+        })(this.context)
     }
-    
+
     draw(obj) {
-        this.drawStrategies[obj.config.type](obj)
+        this.drawStrategies[obj.type](obj)
     }
 
 }
 
 let g = new Game()
-let court = new Court()
-g.draw(court)
-for(let i in COURSESPECIFICATION) {
+// TODO 将这个绘制球场的循环放进Court类里面
+for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-//let court = new Court(ctx, COURSESPECIFICATION, ratio)
-//court.drawCourt()
-//let man = new Footballer(100, 100, 50)
+let man = new Footballer(100, 100, 70, "bob")
+document.getElementsByTagName("body")[0].appendChild(man.canvas)
 
-/** 
-myCanvas.addEventListener("click", event => {
-    man.run(ctx, [event.offsetX, event.offsetY])
+let Canvas = document.getElementById("canvas-bg")
+Canvas.addEventListener("click", event => {
+    man.run(event.x, event.y)
 })
-*/

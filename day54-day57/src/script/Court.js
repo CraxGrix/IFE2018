@@ -1,13 +1,12 @@
 export default class Court {
     constructor(config) {
         
-        this.config = config || {
-            size: [0, 0, 700, 550],
-            type: 'site',
-            fillStyle: 'green',
-            strokeStyle: 'white',
-            lineWidth: 2,
-        }
+        this.size = [0, 0, 700, 550]
+        this.type =  'site'
+        this.fillStyle = 'green'
+        this.strokeStyle =  'white'
+        this.lineWidth = 2
+        
     }
     /** 
     drawCourt() {

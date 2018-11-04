@@ -2,6 +2,7 @@ import Court from './script/Court'
 import Footballer from './script/Footballer'
 
 const log = console.log.bind(console)
+// TODO 移动至Utils类
 const COURSESPECIFICATION = {
     site: {
         type: 'site',
@@ -77,6 +78,7 @@ class Game {
     constructor() {
         this.canvas = document.getElementById("canvas-bg")
         this.context = this.canvas.getContext("2d")
+        // 高分屏Canvas显示优化 TODO 移动至Utils类
         this.ratio = (window.devicePixelRatio || 1) / (this.context.backingStorePixelRatio ||
             this.context.webkitBackingStorePixelRatio ||
             this.context.mozBackingStorePixelRatio ||
@@ -109,7 +111,7 @@ class Game {
                 },
                 'solid': function (obj) {
                     context.beginPath()
-                    context.fillStyle = obj.config.fillStyle || 'red'
+                    context.fillStyle = 'red'
                     context.arc(obj.x, obj.y, 10, 0, 2 * Math.PI)
                     context.fill()
                     context.closePath()
@@ -130,10 +132,12 @@ for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-let man = new Footballer(100, 100, 70, "bob")
-document.getElementsByTagName("body")[0].appendChild(man.canvas)
+let man = new Footballer(100, 100, 70, 50, 50, 'bob')
+g.draw(man)
 
-let Canvas = document.getElementById("canvas-bg")
-Canvas.addEventListener("click", event => {
-    man.run(event.x, event.y)
+let myCanvas = document.getElementById("canvas-bg")
+myCanvas.addEventListener("click", event => {
+    setInterval((event) => {
+        man.run(g, event.offsetX, event.offsetY)
+    }, 1000/30, event)
 })

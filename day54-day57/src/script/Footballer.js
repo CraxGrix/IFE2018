@@ -1,75 +1,41 @@
 export default class Footballer {
-    constructor(x, y, runSpeed, name) {
-        /**
-         * 人类极限奔跑速度约一秒十米
-    */
+    constructor(x, y, VNum, explosiveNum, physical, name) {
         this.x = x
-        this.y = y
+        this.y = y  
         this.type = 'solid'
         this.name = name
-        // 假设人类最高奔跑速度是14米每秒
-        this.speed = 14 * (runSpeed / 100) * 5
-        // 这个属性为速度除于帧数
-        this.runSpeed = 14 * (runSpeed / 100) * 5 / 30
-        this.maxRunSpeed = 3 + (this.runSpeed - 1) * (9 / 98)
-        this.canvas = document.createElement("canvas")
-        this.canvas.id = this.name
-        this.context = this.canvas.getContext("2d")
-        this.ratio = (window.devicePixelRatio || 1) / (this.context.backingStorePixelRatio ||
-            this.context.webkitBackingStorePixelRatio ||
-            this.context.mozBackingStorePixelRatio ||
-            this.context.msBackingStorePixelRatio ||
-            this.context.oBackingStorePixelRatio ||
-            this.context.backingStorePixelRatio || 1)
-        this.canvas.width = 10 * this.ratio
-        this.canvas.height = 10 * this.ratio
-        this.canvas.style.width = this.canvas.width + 'px'
-        this.canvas.style.height = this.canvas.height + 'px'
-        this.context.scale(this.ratio, this.ratio)
-        this.context.beginPath()
-        this.context.fillStyle = 'red'
-        this.context.arc(5, 5, 5, 0, 2 * Math.PI)
-        this.context.fill()
-        this.context.closePath()
-        let site = document.getElementById('canvas-bg')
-        this.windowX = site.getBoundingClientRect().left
-        this.windowY = site.getBoundingClientRect().top
-        this.canvas.style.left = this.windowX + this.x
-        this.canvas.style.top = this.windowY + this.y
-
+        this.VMax = 3 + (VNum - 1) * (9 / 98)
+        this.toMaxSpeedSecends = 4 - (explosiveNum - 1) * (3 / 98)
+        this.inMaxSpeedKeepSecends = 10 + (physical - 1) * (5 / 98)
+        console.log(this.VMax, this.toMaxSpeedSecends)
+        // 此为运动员加速时每三十分之一秒所移动的像素距离
+        // 每秒最大速度除于帧数乘以px倍数的值除于
+        this.v = (this.VMax / (1000 / 30) * 5) / (this.toMaxSpeedSecends * (1000 / 30)) 
+        this.speed = this.v
     }
     /** 
-    init (ctx, location) {
-        this.x = location[0]
-        this.y = location[1]
-        ctx.beginPath()
-        ctx.arc(...location, ...this.config.args)
-        ctx.fillStyle = this.config.fillStyle
-        ctx.fill()
-        
-        ctx.fillStyle = "black"
-        ctx.font = '13px 宋体'
-        ctx.fillText("9", location[0] - 3.5, location[1] + 4)
-        
-        ctx.closePath();
-    }
-    */
-    /** 
-     * 目的地x,y数组
-     * @param 
+     * 每个球员的run方法接受一个目的地座标的数组，通过球员各项身体数值的计算得出下一帧球员应该出现的位置
+     * @param {Array} 目的地座标数组
      */
-    run(x, y) {
-        // TODO 利用贝赛尔曲线实现特定动画行为
-        console.log(x, y, this.x + this.windowX, this.y + this.windowY)
-        // 求两点间距离
-        let result = Math.sqrt(Math.pow((x - (this.x + this.windowX)), 2) + Math.pow((y - (this.y + this.windowY)), 2));
-        let seconds = Math.ceil(result / this.speed)
-        this.canvas.style.transform = "all 3s linear 0s"
-        this.x = x
-        this.y = y
-        this.canvas.style.left = this.windowX + this.x
-        this.canvas.style.top = this.windowY + this.y
-
+    run(Game, targetX, targetY) {
+       // console.log(targetX, targetY, this.x, this.y)
+        // Math.atan2方法接收一组座标返回弧度值
+        let deg = Math.atan2(targetY - this.y, targetX - this.x)
+        let sin = Math.sin(deg)
+        let cos = Math.cos(deg) 
+        let vx = this.v * cos 
+        let vy = this.v * sin 
+        // 根据勾股定理公式 c^2 = a^2 + b^2求出球员与目标之间的距离
+        let distance = Math.sqrt(Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2))
+       // console.log(distance)
+        this.x += vx
+        this.y += vy
+        //console.log(this.x, this.y)
+        Game.draw(this)
+        if(this.v < this.VMax / (1000 / 30) * 5 ) {
+            this.v += this.speed
+            console.log(this.v, this.VMax / (1000 / 30) * 5)
+        }
     }
-    
+
 }

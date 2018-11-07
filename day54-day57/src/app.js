@@ -112,6 +112,7 @@ class Game {
                 'solid': function (obj) {
                     context.beginPath()
                     context.fillStyle = 'red'
+                    //console.log(obj.x)
                     context.arc(obj.x, obj.y, 10, 0, 2 * Math.PI)
                     context.fill()
                     context.closePath()
@@ -123,6 +124,10 @@ class Game {
     draw(obj) {
         this.drawStrategies[obj.type](obj)
     }
+    
+    clear() {
+        this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
+    }
 
 }
 
@@ -132,12 +137,27 @@ for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-let man = new Footballer(100, 100, 70, 50, 50, 'bob')
-g.draw(man)
+let man = new Footballer(100, 100, 99, 1, 50, 'bob')
 
 let myCanvas = document.getElementById("canvas-bg")
 myCanvas.addEventListener("click", event => {
-    setInterval((event) => {
-        man.run(g, event.offsetX, event.offsetY)
-    }, 1000/30, event)
+    man.updata(event.offsetX, event.offsetY)
+    
 })
+
+setInterval(() => {
+    g.clear()
+    for (let i in COURSESPECIFICATION) {
+        g.draw(COURSESPECIFICATION[i])
+    }
+    man.run()
+    g.draw(man)
+    
+    
+}, 1000/30)
+
+
+
+
+
+

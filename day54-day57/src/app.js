@@ -1,5 +1,6 @@
 import Court from './script/Court'
 import Footballer from './script/Footballer'
+import Ball from './script/Ball'
 
 const log = console.log.bind(console)
 // TODO 移动至Utils类
@@ -113,7 +114,14 @@ class Game {
                     context.beginPath()
                     context.fillStyle = 'red'
                     //console.log(obj.x)
-                    context.arc(obj.x, obj.y, 10, 0, 2 * Math.PI)
+                    context.arc(obj.x, obj.y, 7, 0, 2 * Math.PI)
+                    context.fill()
+                    context.closePath()
+                },
+                'ball': function (obj) {
+                    context.beginPath()
+                    context.fillStyle = 'white'
+                    context.arc(obj.x, obj.y, 4, 0, 2 * Math.PI)
                     context.fill()
                     context.closePath()
                 }
@@ -137,11 +145,13 @@ for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-let man = new Footballer(100, 100, 99, 1, 50, 'bob')
+let man = new Footballer(100, 100, 50, 50, 50, 'bob')
+let ball = new Ball(200, 250)
+g.ball = ball
 
 let myCanvas = document.getElementById("canvas-bg")
 myCanvas.addEventListener("click", event => {
-    man.updata(event.offsetX, event.offsetY)
+    g.ball.updata(event.offsetX, event.offsetY)
     
 })
 
@@ -150,8 +160,10 @@ setInterval(() => {
     for (let i in COURSESPECIFICATION) {
         g.draw(COURSESPECIFICATION[i])
     }
-    man.run()
+    man.run(g)
+    g.ball.move()
     g.draw(man)
+    g.draw(ball)
     
     
 }, 1000/30)

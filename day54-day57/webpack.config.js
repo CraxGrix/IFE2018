@@ -24,7 +24,7 @@ if (isDev) {
   config.devServer = {
     host: 'localhost', // 服务器的IP地址，可以使用IP也可以使用localhost
     compress: true, // 服务端压缩是否开启
-    port: 3040, // 端口
+    port: 3041, // 端口
     hot: true,
     open: true
   }

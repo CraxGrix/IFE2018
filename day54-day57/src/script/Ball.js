@@ -27,7 +27,7 @@ export default class Ball {
             this.y += vy
         }
     }
-
+    /** 
     calculationTrack() {
         while(this.distance > 1) {
             let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
@@ -41,6 +41,7 @@ export default class Ball {
         }
         return this.routeArr
     }
+    */
     updata(targetX, targetY) {
         this.targetX = targetX
         this.targetY = targetY

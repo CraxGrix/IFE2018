@@ -1,5 +1,11 @@
+/**
+ *  TODO:
+ *  设置参数可视化面板以便于调节更加真实的参数
+ *  
+ */
+
 export default class Footballer {
-    constructor(x, y, VNum, explosiveNum, physical, name) {
+    constructor(x, y, VNum, explosiveNum, physical, power, technology, name) {
         this.log = 0
         this.x = x
         this.y = y
@@ -10,10 +16,19 @@ export default class Footballer {
         this.inMaxSpeedKeepSecends = 10 + (physical - 1) * (5 / 98)
         //console.log(this.VMax, this.toMaxSpeedSecends)
         // 此为运动员加速时每三十分之一秒所移动的像素距离
-        // this.v 为每帧所递增的速度常数
-        this.v = this.VMax / this.toMaxSpeedSecends * 5 / (1000 / 30)
-        console.log(this.v)
+        // this.VMax * 5 / (1000 / 30)此为每帧所奔跑的最大速度
+        // toMaxSpeedSecends * 1000 / (1000 / 30) 
+        // this.v 为每帧所递增的速度
+        /**
+         * 首先假设技术为1时，差值达到最大，即期望值的百分之五十。技术为99时，差值为期望值的百分之五。平均值则为期望值，超出期望值的数据则以期望值减去超出的差值。
+         */
+        this.v = (this.VMax * 5 / (1000 / 30)) / (this.toMaxSpeedSecends * 1000 / (1000 / 30))
         this.speed = this.v
+        // 此为差值百分比
+        this.technology = (50 - (technology - 1) * (45 / 98)) / 100
+        this.power = 5 + (power - 1) * (45 / 98)
+        this.powerVariance = this.power * this.technology
+        //this.angleVariance = 
     }
     /** 
      * 每个球员的run方法接受一个目的地座标的数组，通过球员各项身体数值的计算得出下一帧球员应该出现的位置
@@ -24,7 +39,8 @@ export default class Footballer {
 
         this.targetX = Game.ball.x
         this.targetY = Game.ball.y
-        let targetArr = Game.ball.calculationTrack()
+        //let targetArr = Game.ball.calculationTrack()
+        //console.log(targetArr)
 
         //console.log(this.x, this.y)
         // 根据勾股定理公式 c^2 = a^2 + b^2求出球员与目标之间的距离
@@ -45,7 +61,7 @@ export default class Footballer {
             this.y += vy
             // console.log(this.x, this.y)
             // Game.draw(this)
-            if (this.v < this.VMax * 5) {
+            if (this.v < this.VMax * 5 / (1000 / 30)) {
                 this.log++
                 this.v += this.speed
                 console.log(this.log)
@@ -73,4 +89,45 @@ export default class Footballer {
         this.targetY = targetY
     }
 
+    randomNormalDistribution() {
+        let u = 0.0,
+            v = 0.0,
+            w = 0.0,
+            c = 0.0
+        do {
+            u = Math.random() * 2 - 1.0
+            v = Math.random() * 2 - 1.0
+            w = u * u + v * v
+        } while (w == 0.0 || w >= 1.0) {
+            c = Math.sqrt((-2 * Math.log(w)) / w)
+        }
+        return u * c
+    }
+    /**
+     * 
+     * @param {Number} expectedValue 运动员的期望值
+     * @param {Number} std_dev 方差
+     */
+    getNumberInNormalDistribution(expectedValue, std_dev) {
+        return expectedValue + (this.randomNormalDistribution() * std_dev)
+    }
+
+    kick(Game) {
+        let x1 = this.x
+        let y1 = this.y
+        let x2 = 580
+        let y2 = 220
+        let x = x1 > x2 ? x1 - x2 : x2 - x1
+        let y = y1 > y2 ? y1 - y2 : y2 - y1
+        let angle = Math.round(Math.atan2(y, x) / (Math.PI / 180))
+        let angleVariance = this.technology * 90
+        let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleVariance)) + angleVariance
+        console.log(actualAngle)
+        /**
+         * 接下来可以根据座标系旋转变换公式
+         * x` = x cosθ + y sinθ
+         * y` = y cosθ - x sinθ
+         * 得出偏差值过后旋转变换的期望座标，然后往这个方向以偏差过后的期望速度进行移动并加上速度衰减公式。 
+         */
+    }
 }

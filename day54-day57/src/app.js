@@ -145,17 +145,17 @@ for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-let man = new Footballer(100, 100, 50, 50, 50, 'bob')
-let ball = new Ball(200, 250)
+let man = new Footballer(300, 250, 50, 50, 50, 50, 99, 'bob')
+let ball = new Ball(310, 250)
 g.ball = ball
 
 let myCanvas = document.getElementById("canvas-bg")
 myCanvas.addEventListener("click", event => {
+    console.log(event.offsetX, event.offsetY)
     g.ball.updata(event.offsetX, event.offsetY)
-    
 })
 
-setInterval(() => {
+let id = setInterval(() => {
     g.clear()
     for (let i in COURSESPECIFICATION) {
         g.draw(COURSESPECIFICATION[i])
@@ -167,6 +167,15 @@ setInterval(() => {
     
     
 }, 1000/30)
+
+let stop = document.getElementById("stopbutton")
+stop.addEventListener('click', () => {
+    clearInterval(id)
+})
+let fire = document.getElementById("firebutton")
+fire.addEventListener('click', () => {
+    man.kick(g)
+})
 
 
 

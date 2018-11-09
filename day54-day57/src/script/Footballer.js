@@ -1,7 +1,7 @@
 /**
  *  TODO:
  *  设置参数可视化面板以便于调节更加真实的参数
- *  
+ *  可将球场正中心设为直角座标系的原点，然后减去数值进行实际的坐标。
  */
 
 export default class Footballer {
@@ -27,8 +27,8 @@ export default class Footballer {
         // 此为差值百分比
         this.technology = (50 - (technology - 1) * (45 / 98)) / 100
         this.power = 5 + (power - 1) * (45 / 98)
-        this.powerVariance = this.power * this.technology
-        //this.angleVariance = 
+        this.powerletiance = this.power * this.technology
+        //this.angleletiance = 
     }
     /** 
      * 每个球员的run方法接受一个目的地座标的数组，通过球员各项身体数值的计算得出下一帧球员应该出现的位置
@@ -114,20 +114,74 @@ export default class Footballer {
 
     kick(Game) {
         let x1 = this.x
-        let y1 = this.y
+        let y1 = -this.y
         let x2 = 580
-        let y2 = 220
+        let y2 = -120
+        /** 
         let x = x1 > x2 ? x1 - x2 : x2 - x1
         let y = y1 > y2 ? y1 - y2 : y2 - y1
         let angle = Math.round(Math.atan2(y, x) / (Math.PI / 180))
-        let angleVariance = this.technology * 90
-        let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleVariance)) + angleVariance
-        console.log(actualAngle)
+        */
+        let angle = this.getAngle({
+            x: x1,
+            y: y1
+        }, {
+            x: x2,
+            y: y2
+        })
+        let angleletiance = this.technology * 90
+        let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleletiance)) + angleletiance
+        console.log(angle)
         /**
+         * 
          * 接下来可以根据座标系旋转变换公式
-         * x` = x cosθ + y sinθ
-         * y` = y cosθ - x sinθ
+         * 
+         * 逆时针:
+         * x3 = (x2 - x1) * Math.cos((Math.PI / 180 * angle)) - (y2 - y1) * Math.sin(Math.PI / 180 * angle) + x1
+         * y3 = (x2 - x1) * Math.sin((Math.PI / 180 * angle)) + (y2 - y1) * Math.cos(Math.PI / 180 * angle) + y1
+         * 顺时针
+         * x3 = 
          * 得出偏差值过后旋转变换的期望座标，然后往这个方向以偏差过后的期望速度进行移动并加上速度衰减公式。 
          */
+        //x = (x2 * Math.cos((Math.PI / 180 * 6))) - ((y2 * Math.sin(Math.PI / 180 * 6)))
+        //y = (y2 * Math.cos((Math.PI / 180 * 6))) + ((x2 * Math.sin(Math.PI / 180 * 6)))
+        //x = (x2 - x1) * Math.cos((Math.PI / 180 * 6)) - (y2 - y1) * Math.sin(Math.PI / 180 * 6) + x1
+        //y = (x2 - x1) * Math.sin((Math.PI / 180 * 6)) + (y2 - y1) * Math.cos(Math.PI / 180 * 6) + y1
+        //console.log(x, y)
     }
+
+    getAngle(A, B) {
+        let x1 = A.x;
+        let y1 = A.y;
+        let x2 = B.x;
+        let y2 = B.y;
+
+        let a = Math.abs(x1 - x2);
+        let b = Math.abs(y1 - y2);
+
+        if (a === 0 || b === 0) {
+            throw new Error('该两点相交的直线无法与水平轴或垂直轴构成三角形');
+        }
+
+        let c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+
+        let randianToAngle = function (scale) {
+            let radian = Math.acos(scale);
+
+            let angle = 180 / Math.PI * radian;
+
+            return Math.round(angle);
+        }
+
+        let angleA = randianToAngle(b / c);
+        let angleB = randianToAngle(a / c);
+
+        return {
+            A: angleA,
+            B: angleB,
+            C: 90
+        }
+    }
+
+
 }

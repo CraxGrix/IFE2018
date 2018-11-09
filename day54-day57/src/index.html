@@ -15,6 +15,30 @@
             left: 50%;
             margin: -275px 0 0 -350px;
         }
+        #panel {
+            position: absolute;
+            display:flex;
+            flex-wrap:wrap;
+
+            height: 100px;
+            width: 400px;
+            left: 50%;
+            margin-left: -250px;
+            border: 1px solid black
+        }
+        .text-info {
+            display: inline;
+            font-size: 12px;
+        }
+        .text-info.coordinate {
+            display: inline-block;
+            width: 198px;
+            height: 20px;
+            text-align: center;
+        }
+        .edit-input {
+            width: 60px;
+        }
 
 
         
@@ -24,8 +48,19 @@
 
 <body>
     <canvas id="canvas-bg" width="625" height="440"></canvas>
-    <button id="stopbutton"> 暂停</button>
-    <button id="firebutton"> 踢球</button>
+    <div id="panel">
+        <div class="text-info-wrap">
+            <p class="text-info coordinate">足球坐标：100, 100</p>
+            <p class="text-info coordinate">球员坐标：100, 200</p>
+            <p class="text-info">体力：<input class="edit-input" id="physical-edit-input"type="number" name="physical" min="1" max="99" value="50"></p>
+            <p class="text-info">速度：<input class="edit-input" id="speed-edit-input"type="number" name="physical" min="1" max="99" value="50"></p>
+            <p class="text-info">力量：<input class="edit-input" id="power-edit-input"type="number" name="physical" min="1" max="99" value="50"></p>
+            <p class="text-info">技术：<input class="edit-input" id="technology-edit-input"type="number" name="physical" min="1" max="99" value="50"></p>
+        </div>
+            <button id="stopbutton"> 暂停</button>
+            <button id="firebutton"> 踢球</button>
+    </div>
+    
 </body>
 
 

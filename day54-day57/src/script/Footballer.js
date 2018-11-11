@@ -2,8 +2,10 @@
  *  TODO:
  *  设置参数可视化面板以便于调节更加真实的参数
  *  可将球场正中心设为直角座标系的原点，然后减去数值进行实际的坐标。
+ *  那么原点的坐标则为球场长度与宽度各除于2得出原点坐标(262.5, 170)，则球场的范围在(50, 50) (575, 50) (50, 390), (575, 390)这四个坐标之内。
+ *  则球场的第一象限范围在(262.5, 50)~(575, 220)，第二象限范围在(50, 50)~(262.5, 220)之内,第三象限范围在(50, 220)~(262.5, 390)之内,第四象限范围在(262.5, 170)~(575, 390)之内
+ *  这样就把球场还原为整个平面直角座标系
  */
-
 export default class Footballer {
     constructor(x, y, VNum, explosiveNum, physical, power, technology, name) {
         this.log = 0
@@ -21,6 +23,7 @@ export default class Footballer {
         // this.v 为每帧所递增的速度
         /**
          * 首先假设技术为1时，差值达到最大，即期望值的百分之五十。技术为99时，差值为期望值的百分之五。平均值则为期望值，超出期望值的数据则以期望值减去超出的差值。
+         * 方差应为实际角度值的技术半分比。
          */
         this.v = (this.VMax * 5 / (1000 / 30)) / (this.toMaxSpeedSecends * 1000 / (1000 / 30))
         this.speed = this.v
@@ -114,9 +117,9 @@ export default class Footballer {
 
     kick(Game) {
         let x1 = this.x
-        let y1 = -this.y
-        let x2 = 580
-        let y2 = -120
+        let y1 = this.y
+        let x2 = 575
+        let y2 = 220
         /** 
         let x = x1 > x2 ? x1 - x2 : x2 - x1
         let y = y1 > y2 ? y1 - y2 : y2 - y1
@@ -131,6 +134,11 @@ export default class Footballer {
         })
         let angleletiance = this.technology * 90
         let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleletiance)) + angleletiance
+        
+        let A = Window.utils.coordinateTransformation(x1, y1)
+        let B = Window.utils.coordinateTransformation(x2, y2)
+        console.log(A, B)
+        angle = Window.utils.calculatingAngle(A, B)
         console.log(angle)
         /**
          * 

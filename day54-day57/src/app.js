@@ -1,11 +1,14 @@
 import Court from './script/Court'
 import Footballer from './script/Footballer'
 import Ball from './script/Ball'
+import Utils from './script/utils'
 
 const log = console.log.bind(console)
-// TODO 移动至Utils类
+Window.utils = new Utils()
+// TODO 移动至config配置文件当中
 const COURSESPECIFICATION = {
     site: {
+        // 球场面积换算为像素则为625*440，其余100为绿边。
         type: 'site',
         fillStyle: 'green',
         size: [0, 0, 700, 550],

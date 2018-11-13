@@ -148,7 +148,7 @@ for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-let man = new Footballer(300, 250, 50, 50, 50, 50, 99, 'bob')
+let man = new Footballer(300, 250, 50, 50, 50, 50, 50, 'bob')
 let ball = new Ball(310, 250)
 g.ball = ball
 
@@ -169,7 +169,7 @@ let id = setInterval(() => {
     g.draw(ball)
     
     
-}, 1000/30)
+}, 1000)
 
 let stop = document.getElementById("stopbutton")
 stop.addEventListener('click', () => {

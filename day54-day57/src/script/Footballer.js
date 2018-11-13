@@ -1,10 +1,14 @@
+import Ball from "./Ball";
+
 /**
  *  TODO:
  *  设置参数可视化面板以便于调节更加真实的参数
  *  可将球场正中心设为直角座标系的原点，然后减去数值进行实际的坐标。
  *  那么原点的坐标则为球场长度与宽度各除于2得出原点坐标(262.5, 170)，则球场的范围在(50, 50) (575, 50) (50, 390), (575, 390)这四个坐标之内。
  *  则球场的第一象限范围在(262.5, 50)~(575, 220)，第二象限范围在(50, 50)~(262.5, 220)之内,第三象限范围在(50, 220)~(262.5, 390)之内,第四象限范围在(262.5, 170)~(575, 390)之内
- *  这样就把球场还原为整个平面直角座标系
+ *  这样就把球场还原为整个平面直角座标系.
+ *  关于正态分布的方差该如何设置？假设点o与期望值a的角度为x，则方差=x*方差百分比
+ *  直角坐标系中，如果想让两点按角度旋转的话应平移至原点后再进行旋转。
  */
 export default class Footballer {
     constructor(x, y, VNum, explosiveNum, physical, power, technology, name) {
@@ -22,13 +26,13 @@ export default class Footballer {
         // toMaxSpeedSecends * 1000 / (1000 / 30) 
         // this.v 为每帧所递增的速度
         /**
-         * 首先假设技术为1时，差值达到最大，即期望值的百分之五十。技术为99时，差值为期望值的百分之五。平均值则为期望值，超出期望值的数据则以期望值减去超出的差值。
+         * 首先假设技术为1时，差值达到最大，即期望值的百分之30。技术为99时，差值为期望值的百分之五。平均值则为期望值，超出期望值的数据则以期望值减去超出的差值。
          * 方差应为实际角度值的技术半分比。
          */
         this.v = (this.VMax * 5 / (1000 / 30)) / (this.toMaxSpeedSecends * 1000 / (1000 / 30))
         this.speed = this.v
         // 此为差值百分比
-        this.technology = (50 - (technology - 1) * (45 / 98)) / 100
+        this.technology = (30 - (technology - 1) * (25 / 98)) / 100
         this.power = 5 + (power - 1) * (45 / 98)
         this.powerletiance = this.power * this.technology
         //this.angleletiance = 
@@ -118,13 +122,13 @@ export default class Footballer {
     kick(Game) {
         let x1 = this.x
         let y1 = this.y
-        let x2 = 575
-        let y2 = 220
+        let x2 = 194
+        let y2 = 310
         /** 
         let x = x1 > x2 ? x1 - x2 : x2 - x1
         let y = y1 > y2 ? y1 - y2 : y2 - y1
         let angle = Math.round(Math.atan2(y, x) / (Math.PI / 180))
-        */
+        
         let angle = this.getAngle({
             x: x1,
             y: y1
@@ -132,21 +136,32 @@ export default class Footballer {
             x: x2,
             y: y2
         })
-        let angleletiance = this.technology * 90
-        let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleletiance)) + angleletiance
-        
-        let A = Window.utils.coordinateTransformation(x1, y1)
+        */
+       let A = Window.utils.coordinateTransformation(x1, y1)
         let B = Window.utils.coordinateTransformation(x2, y2)
         console.log(A, B)
-        angle = Window.utils.calculatingAngle(A, B)
+        let angle = Window.utils.calculatingAngle(A, B)
         console.log(angle)
+
+        let angleletiance = this.technology * angle
+        let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleletiance))
+        ///let [x, y] = 
+        console.log(actualAngle)
+        let [x, y] = Window.utils.coordinateReduction(...Window.utils.rotationCoordinates(A, B, actualAngle))
+        //console.log(x, y)
+        Game.draw(new Ball(x2, y2))
+        for(let i = 1; i <= 100; i++) {
+            let [x, y] = Window.utils.coordinateReduction(...Window.utils.rotationCoordinates(A, B, i))
+            Game.draw(new Ball(x, y))
+        }
+        //Game.draw(new Ball(x, y))
         /**
          * 
          * 接下来可以根据座标系旋转变换公式
          * 
-         * 逆时针:
-         * x3 = (x2 - x1) * Math.cos((Math.PI / 180 * angle)) - (y2 - y1) * Math.sin(Math.PI / 180 * angle) + x1
-         * y3 = (x2 - x1) * Math.sin((Math.PI / 180 * angle)) + (y2 - y1) * Math.cos(Math.PI / 180 * angle) + y1
+         * 顺时针:
+         * x3 = (x2 - x1) * Math.cos((Math.PI / 180 * angle)) + (y2 - y1) * Math.sin(Math.PI / 180 * angle) 
+         * y3 = (x2 - x1) * Math.cos((Math.PI / 180 * angle)) - (y2 - y1) * Math.sin(Math.PI / 180 * angle) 
          * 顺时针
          * x3 = 
          * 得出偏差值过后旋转变换的期望座标，然后往这个方向以偏差过后的期望速度进行移动并加上速度衰减公式。 
@@ -157,39 +172,5 @@ export default class Footballer {
         //y = (x2 - x1) * Math.sin((Math.PI / 180 * 6)) + (y2 - y1) * Math.cos(Math.PI / 180 * 6) + y1
         //console.log(x, y)
     }
-
-    getAngle(A, B) {
-        let x1 = A.x;
-        let y1 = A.y;
-        let x2 = B.x;
-        let y2 = B.y;
-
-        let a = Math.abs(x1 - x2);
-        let b = Math.abs(y1 - y2);
-
-        if (a === 0 || b === 0) {
-            throw new Error('该两点相交的直线无法与水平轴或垂直轴构成三角形');
-        }
-
-        let c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-
-        let randianToAngle = function (scale) {
-            let radian = Math.acos(scale);
-
-            let angle = 180 / Math.PI * radian;
-
-            return Math.round(angle);
-        }
-
-        let angleA = randianToAngle(b / c);
-        let angleB = randianToAngle(a / c);
-
-        return {
-            A: angleA,
-            B: angleB,
-            C: 90
-        }
-    }
-
 
 }

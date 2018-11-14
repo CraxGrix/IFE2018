@@ -3,13 +3,13 @@ export default class Ball {
         this.x = x
         this.y = y
         this.type = "ball"
-        this.v = 1
         this.capture = false
         this.routeArr = []
+        this.speed = 0
         this.rx = this.x
         this.ry = this.y
     }
-
+    // TODO 要有一个target坐标和this坐标的偏差校正函数，如果两个坐标太近了就直接不用运动了.
     move () {
         if(this.capture) {
             this.targetX = this.x
@@ -21,29 +21,15 @@ export default class Ball {
             let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
             let sin = Math.sin(deg)
             let cos = Math.cos(deg)
-            let vx = this.v * cos
-            let vy = this.v * sin
+            let vx = this.speed * cos
+            let vy = this.speed * sin
             this.x += vx
             this.y += vy
         }
     }
-    /** 
-    calculationTrack() {
-        while(this.distance > 1) {
-            let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
-            let sin = Math.sin(deg)
-            let cos = Math.cos(deg)
-            let vx = this.v * cos
-            let vy = this.v * sin
-            this.rx += vx
-            this.ry += vy 
-            this.routeArr.push([this.rx, this.ry])
-        }
-        return this.routeArr
-    }
-    */
-    updata(targetX, targetY) {
+    updata(targetX, targetY, speed) {
         this.targetX = targetX
         this.targetY = targetY
+        this.speed = speed
     }
 }

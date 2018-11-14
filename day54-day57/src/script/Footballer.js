@@ -16,6 +16,7 @@ export default class Footballer {
         this.x = x
         this.y = y
         this.type = 'solid'
+        this.status = false
         this.name = name
         this.VMax = 3 + (VNum - 1) * (9 / 98) //7.5
         this.toMaxSpeedSecends = 4 - (explosiveNum - 1) * (3 / 98) //2.5s
@@ -96,81 +97,38 @@ export default class Footballer {
         this.targetY = targetY
     }
 
-    randomNormalDistribution() {
-        let u = 0.0,
-            v = 0.0,
-            w = 0.0,
-            c = 0.0
-        do {
-            u = Math.random() * 2 - 1.0
-            v = Math.random() * 2 - 1.0
-            w = u * u + v * v
-        } while (w == 0.0 || w >= 1.0) {
-            c = Math.sqrt((-2 * Math.log(w)) / w)
-        }
-        return u * c
-    }
-    /**
-     * 
-     * @param {Number} expectedValue 运动员的期望值
-     * @param {Number} std_dev 方差
-     */
-    getNumberInNormalDistribution(expectedValue, std_dev) {
-        return expectedValue + (this.randomNormalDistribution() * std_dev)
-    }
-
+    // 可以将踢球的行为简化为，根据球员的位置来计算最后给予的足球速度和目标位置。
+    // 静止地踢运动的球，可以直接拿ball的target坐标和球员的当前坐标来计算期望方向的夹角。如果球的target坐标和它的当前坐标相差为0的话则判断球的状态是
+    // 静止的。抑或是增加一个布尔值来表示足球的状态。
     kick(Game) {
         let x1 = this.x
         let y1 = this.y
         let x2 = 194
         let y2 = 310
-        /** 
-        let x = x1 > x2 ? x1 - x2 : x2 - x1
-        let y = y1 > y2 ? y1 - y2 : y2 - y1
-        let angle = Math.round(Math.atan2(y, x) / (Math.PI / 180))
-        
-        let angle = this.getAngle({
-            x: x1,
-            y: y1
-        }, {
-            x: x2,
-            y: y2
-        })
-        */
-       let A = Window.utils.coordinateTransformation(x1, y1)
+        let A = Window.utils.coordinateTransformation(x1, y1)
         let B = Window.utils.coordinateTransformation(x2, y2)
-        console.log(A, B)
-        let angle = Window.utils.calculatingAngle(A, B)
-        console.log(angle)
+        // 判断球员是否在移动和足球是否静止
+        // XXX: 可以直接使用对象的状态来进行判断
+        if (Game.ball.targetX === Game.ball.x && Game.ball.targetY === Game.ball.y && (this.x !== this.targetX || this.y !== this.targetY)) {
+            // 调用向量计算角度的函数 传入参数为 球员当前坐标 球员期望坐标 足球坐标
+            // 具体的影响因子 b = 1 + 1 / 180 * cos, 然后再用b乘方差得出影响过后的值
+            // 判断足球是否运动球员是否静止
+            // XXX: 可以直接使用对象的状态来进行判断
+        } else if ((Game.ball.targetX === Game.ball.x && Game.ball.targetY === Game.ball.y) && (this.x === this.targetX && this.y === this.targetY)) {
+            // 调用向量计算角度的函数 传入的参数为 球员期望坐标 球员当前坐标 足球期望坐标
+            // 偏移量c最大值为30度 当角度达到90度时为最大，首先用90对角度取余，然后用余数乘 最大偏移量/90 得到的系数算出实际偏移量。
+        }
+            // 运动地踢运动的球可以直接用180度减去一个角度之后得出另外一个角度
 
+        let angle = Window.utils.calculatingAngle(A, B)
         let angleletiance = this.technology * angle
-        let actualAngle = Math.round(this.getNumberInNormalDistribution(angle, angleletiance))
-        ///let [x, y] = 
+        let actualAngle = Math.round(Window.utils.getNumberInNormalDistribution(angle, angleletiance)) - angle
+
+
         console.log(actualAngle)
         let [x, y] = Window.utils.coordinateReduction(...Window.utils.rotationCoordinates(A, B, actualAngle))
-        //console.log(x, y)
         Game.draw(new Ball(x2, y2))
-        for(let i = 1; i <= 100; i++) {
-            let [x, y] = Window.utils.coordinateReduction(...Window.utils.rotationCoordinates(A, B, i))
-            Game.draw(new Ball(x, y))
-        }
-        //Game.draw(new Ball(x, y))
-        /**
-         * 
-         * 接下来可以根据座标系旋转变换公式
-         * 
-         * 顺时针:
-         * x3 = (x2 - x1) * Math.cos((Math.PI / 180 * angle)) + (y2 - y1) * Math.sin(Math.PI / 180 * angle) 
-         * y3 = (x2 - x1) * Math.cos((Math.PI / 180 * angle)) - (y2 - y1) * Math.sin(Math.PI / 180 * angle) 
-         * 顺时针
-         * x3 = 
-         * 得出偏差值过后旋转变换的期望座标，然后往这个方向以偏差过后的期望速度进行移动并加上速度衰减公式。 
-         */
-        //x = (x2 * Math.cos((Math.PI / 180 * 6))) - ((y2 * Math.sin(Math.PI / 180 * 6)))
-        //y = (y2 * Math.cos((Math.PI / 180 * 6))) + ((x2 * Math.sin(Math.PI / 180 * 6)))
-        //x = (x2 - x1) * Math.cos((Math.PI / 180 * 6)) - (y2 - y1) * Math.sin(Math.PI / 180 * 6) + x1
-        //y = (x2 - x1) * Math.sin((Math.PI / 180 * 6)) + (y2 - y1) * Math.cos(Math.PI / 180 * 6) + y1
-        //console.log(x, y)
+        Game.draw(new Ball(x, y))
     }
 
 }

@@ -179,6 +179,26 @@ let fire = document.getElementById("firebutton")
 fire.addEventListener('click', () => {
     man.kick(g)
 })
+let submit = document.getElementById("submit")
+submit.addEventListener("click", (event) => {
+    if (window.sessionStorage) {
+        let optionArr = document.querySelectorAll("input"),
+            key = document.querySelector("input[name='name']").value
+        if(key) {
+            let obj = {}
+            optionArr.forEach( (v, i) => {
+                obj[v.name] = v.value
+            })
+            // TODO 完成球员生成面板的功能
+            window.sessionStorage.setItem(key, obj)
+            //console.log(window.sessionStorage.key())
+        } else {
+            throw new Error("请输入球员姓名")
+        }
+    } else {
+        throw new Error("浏览器不支持sessionStorage存储")
+    }
+})
 
 
 

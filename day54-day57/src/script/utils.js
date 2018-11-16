@@ -96,7 +96,6 @@ export default class Utils {
             sin = Math.sin(radians),
             nx = (cos * (x2 - x1)) + (sin * (y2 - y1)) + x1,
             ny = (cos * (y2 - y1)) - (sin * (x2 - x1)) + y1
-        console.log(nx, ny)
         return [nx, ny]
     }
     /**
@@ -125,6 +124,20 @@ export default class Utils {
      */
     getNumberInNormalDistribution(expectedValue, std_dev) {
         return expectedValue + (this.randomNormalDistribution() * std_dev)
+    }
+
+    /**
+     * 生成随机的网页坐标
+     * @return {Object} 坐标对象
+     */
+    randomCoordinateGeneration() {
+        let x = Math.random() * (575 - 50) + 50,
+            y = Math.random() * (390 - 50) + 50
+        return {
+            x: x,
+            y: y,
+        }
+
     }
 
 

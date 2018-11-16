@@ -149,13 +149,17 @@ for (let i in COURSESPECIFICATION) {
 }
 
 let man = new Footballer(300, 250, 50, 50, 50, 50, 50, 'bob')
-let ball = new Ball(310, 250)
+let ball = new Ball(200, 200)
+man.updata(200, 200)
 g.ball = ball
 
 let myCanvas = document.getElementById("canvas-bg")
 myCanvas.addEventListener("click", event => {
     console.log(event.offsetX, event.offsetY)
-    g.ball.updata(event.offsetX, event.offsetY)
+    man.kick(g, {
+        x: event.offsetX,
+        y: event.offsetY,
+    })
 })
 
 let id = setInterval(() => {
@@ -163,13 +167,13 @@ let id = setInterval(() => {
     for (let i in COURSESPECIFICATION) {
         g.draw(COURSESPECIFICATION[i])
     }
-    man.run(g)
     g.ball.move()
+    man.run(g)
     g.draw(man)
     g.draw(ball)
     
     
-}, 1000)
+}, 1000 / 30)
 
 let stop = document.getElementById("stopbutton")
 stop.addEventListener('click', () => {
@@ -181,13 +185,24 @@ fire.addEventListener('click', () => {
 })
 let submit = document.getElementById("submit")
 submit.addEventListener("click", (event) => {
+    let optionArr = document.querySelectorAll("input"),
+    key = document.querySelector("input[name='name']").value
+
     if (window.sessionStorage) {
-        let optionArr = document.querySelectorAll("input"),
-            key = document.querySelector("input[name='name']").value
         if(key) {
             let obj = {}
             optionArr.forEach( (v, i) => {
                 obj[v.name] = v.value
+                let regex = /[\s\S]*/
+                //v = v.outerHTML.replace(regex, "<p>Hello</p>")
+                let parent = v.parentNode
+                let el = document.createElement("span")
+                el.innerHTML = v.value
+                el.id = v.name
+                parent.removeChild(v)
+                parent.appendChild(el)
+                parent.className = "text-info"
+                
             })
             // TODO 完成球员生成面板的功能
             window.sessionStorage.setItem(key, obj)
@@ -198,6 +213,7 @@ submit.addEventListener("click", (event) => {
     } else {
         throw new Error("浏览器不支持sessionStorage存储")
     }
+    
 })
 
 

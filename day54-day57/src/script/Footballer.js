@@ -11,7 +11,7 @@ import Ball from "./Ball";
  *  直角坐标系中，如果想让两点按角度旋转的话应平移至原点后再进行旋转。
  */
 export default class Footballer {
-    constructor(x, y, VNum, explosiveNum, physical, power, technology, name) {
+    constructor(x, y, speed, explosiveNum, physical, power, technology, name) {
         this.log = 0
         // 影响因子
         this.b = 1
@@ -22,7 +22,7 @@ export default class Footballer {
         this.type = 'solid'
         this.status = true
         this.name = name
-        this.VMax = 3 + (VNum - 1) * (9 / 98) //7.5
+        this.VMax = 3 + (speed - 1) * (9 / 98) //7.5
         this.toMaxSpeedSecends = 4 - (explosiveNum - 1) * (3 / 98) //2.5s
         this.inMaxSpeedKeepSecends = 10 + (physical - 1) * (5 / 98)
         //console.log(this.VMax, this.toMaxSpeedSecends)
@@ -41,64 +41,67 @@ export default class Footballer {
         this.rateDifference = (30 - (this.technology - 1) * (25 / 98)) / 100
         this.power = 5 + (power - 1) * (45 / 98)
         this.powerletiance = this.power * this.rateDifference
-        
+
     }
     /** 
      * 每个球员的run方法接受一个目的地座标的数组，通过球员各项身体数值的计算得出下一帧球员应该出现的位置
      * @param {Array} 目的地座标数组
      */
     run(Game) {
-        //console.log(this.v)
+        if (this.status) {
+            //console.log(this.v)
 
-        this.targetX = Game.ball.x 
-        this.targetY = Game.ball.y
-        //let targetArr = Game.ball.calculationTrack()
-        //console.log(targetArr)
+            this.targetX = Game.ball.x
+            this.targetY = Game.ball.y
+            //let targetArr = Game.ball.calculationTrack()
+            //console.log(targetArr)
 
-        //console.log(this.x, this.y)
-        // 根据勾股定理公式 c^2 = a^2 + b^2求出球员与目标之间的距离
-        // TODO 移动 这个功能应抽象出来
-        let distance = Math.sqrt(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2))
-        console.log(distance)
-        //
-        //console.log(distance, this.log)
-        if (distance > 12.5) {
-            //this.status = true
-            let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
-            // console.log(targetX, targetY, this.x, this.y)
-            // Math.atan2方法接收一组座标返回弧度值
-            //console.log(deg)
-            let sin = Math.sin(deg)
-            let cos = Math.cos(deg)
-            let vx = this.v * cos
-            let vy = this.v * sin
+            //console.log(this.x, this.y)
+            // 根据勾股定理公式 c^2 = a^2 + b^2求出球员与目标之间的距离
+            // TODO 移动 这个功能应抽象出来
+            let distance = Math.sqrt(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2))
+            console.log(this.targetX, this.targetY, this.y, this.y)
+            //
+            //console.log(distance, this.log)
+            if (distance > 12.5) {
+                //this.status = true
+                let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
+                // console.log(targetX, targetY, this.x, this.y)
+                // Math.atan2方法接收一组座标返回弧度值
+                //console.log(deg)
+                let sin = Math.sin(deg)
+                let cos = Math.cos(deg)
+                let vx = this.v * cos
+                let vy = this.v * sin
 
-            this.x += vx
-            this.y += vy
-            // console.log(this.x, this.y)
-            // Game.draw(this)
-            if (this.v < this.VMax * 5 / (1000 / 30)) {
-                this.log++
-                this.v += this.speed
-                //console.log(this.log)
-                //console.log(this.v, this.VMax / (1000 / 30) * 5)
-            } else {
-                //console.log(Math.sqrt(Math.pow(100 - this.x, 2) + Math.pow(100 - this.y, 2)), "起点距离")
-                // 体力计时器
-                // TODO Fix Bug 真实化体力耗尽所表现出来的现象 
-                if (!this.physicalTimeOutId) {
-                    this.physicalTimeOutId = setTimeout(() => {
-                        this.v = this.speed
-                        this.physicalTimeOutId = null
-                    }, this.inMaxSpeedKeepSecends * 1000)
+                this.x += vx
+                this.y += vy
+                // console.log(this.x, this.y)
+                // Game.draw(this)
+                if (this.v < this.VMax * 5 / (1000 / 30)) {
+                    this.log++
+                    this.v += this.speed
+                    //console.log(this.log)
+                    //console.log(this.v, this.VMax / (1000 / 30) * 5)
+                } else {
+                    //console.log(Math.sqrt(Math.pow(100 - this.x, 2) + Math.pow(100 - this.y, 2)), "起点距离")
+                    // 体力计时器
+                    // TODO Fix Bug 真实化体力耗尽所表现出来的现象 
+                    if (!this.physicalTimeOutId) {
+                        this.physicalTimeOutId = setTimeout(() => {
+                            this.v = this.speed
+                            this.physicalTimeOutId = null
+                        }, this.inMaxSpeedKeepSecends * 1000)
+                    }
                 }
+            } else if (this.status) {
+                //this.kick(Game, Window.utils.randomCoordinateGeneration())
+                this.status = false
+                //Game.ball.capture = true
+                this.v = this.speed
             }
-        } else if(this.status) {
-            this.kick(Game, Window.utils.randomCoordinateGeneration())
-            this.status = false
-            //Game.ball.capture = true
-            this.v = this.speed
         }
+
 
     }
 
@@ -125,11 +128,10 @@ export default class Footballer {
             let angle = Window.utils.calculatingAngleVector(A, B, C)
             this.b = 1 + 1 / 180 * angle
             angle = Window.utils.calculatingAngleVector(A, B, D)
-            let std_dev = 0.01 +　(this.technology - 1) * (0.3 / 98)
+            let std_dev = 0.01 + (this.technology - 1) * (0.3 / 98)
             let offsetCoefficient = Window.utils.getNumberInNormalDistribution(1, std_dev)
-            this.c = ((angle % 90) * (30 / 90)) * Math.abs(1 - offsetCoefficient)        
-        }
-        else if (this.status && !Game.ball.status) {
+            this.c = ((angle % 90) * (30 / 90)) * Math.abs(1 - offsetCoefficient)
+        } else if (this.status && !Game.ball.status) {
             let angle = Window.utils.calculatingAngleVector(A, B, C)
             this.b = 1 + 1 / 180 * angle
             // XXX: 可以直接使用对象的状态来进行判断
@@ -138,7 +140,7 @@ export default class Footballer {
             let angle = Window.utils.calculatingAngleVector(A, B, D)
             // 偏移量c最大值为30度 当角度达到90度时为最大，首先用90对角度取余，然后用余数乘 最大偏移量/90 得到的系数算出实际偏移量。
             // 假设技术值为1时 方差为0.3 技术为99时 方差为0.01
-            let std_dev = 0.01 +　(this.technology - 1) * (0.3 / 98)
+            let std_dev = 0.01 + (this.technology - 1) * (0.3 / 98)
             let offsetCoefficient = Window.utils.getNumberInNormalDistribution(1, std_dev)
             this.c = ((angle % 90) * (30 / 90)) * Math.abs(1 - offsetCoefficient)
         }

@@ -5,6 +5,8 @@ import Utils from './script/utils'
 
 const log = console.log.bind(console)
 Window.utils = new Utils()
+let execute,
+    key
 // TODO 移动至config配置文件当中
 const COURSESPECIFICATION = {
     site: {
@@ -74,9 +76,28 @@ const COURSESPECIFICATION = {
         size: [312.5, 221.25, 45.75, 0.5 * Math.PI, 2.5 * Math.PI, false],
     },
 }
+const TEXTARRAY = ['球员在球场中心向球门踢出足球', '球员从小禁区向球场中心踢出足球', '球员从角球区向点球点踢出足球', '球员从大禁区角附近，向球门踢出足球', '球员从本方禁区附近向对方半场边线踢出足球']
+/**
+ * 球场中心：262.5, 170 右球门：575, 220 右小禁区：560, 220 右上角球区： 567, 57 右点球区：505, 235  右上大禁区角：505, 138 边线:272, 50
+ */
+const POSITIONCOORDINATES = {
+    centerMark: [262.5, 170],
+    leftGoalPost: [575, 220],
+    leftGoalArea: [560, 220],
+    leftCornerArc: [567, 57],
+    leftPenaltyMark: [505, 235],
+    leftPenaltyAreaAngle: [505, 138],
+    sideLine: [272, 50]
+}
 
+const POLICYARRAY = [
+    [POSITIONCOORDINATES.centerMark, POSITIONCOORDINATES.leftGoalPost],
+    [POSITIONCOORDINATES.leftGoalArea, POSITIONCOORDINATES.centerMark],
+    [POSITIONCOORDINATES.leftCornerArc, POSITIONCOORDINATES.leftPenaltyMark],
+    [POSITIONCOORDINATES.leftPenaltyAreaAngle, POSITIONCOORDINATES.leftGoalPost],
+    [POSITIONCOORDINATES.leftPenaltyArea, POSITIONCOORDINATES.sideLine],
 
-
+]
 
 class Game {
     constructor() {
@@ -135,9 +156,9 @@ class Game {
     draw(obj) {
         this.drawStrategies[obj.type](obj)
     }
-    
+
     clear() {
-        this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
 }
@@ -148,10 +169,7 @@ for (let i in COURSESPECIFICATION) {
     g.draw(COURSESPECIFICATION[i])
 }
 
-let man = new Footballer(300, 250, 50, 50, 50, 50, 50, 'bob')
-let ball = new Ball(200, 200)
-man.updata(200, 200)
-g.ball = ball
+
 
 let myCanvas = document.getElementById("canvas-bg")
 myCanvas.addEventListener("click", event => {
@@ -167,12 +185,15 @@ let id = setInterval(() => {
     for (let i in COURSESPECIFICATION) {
         g.draw(COURSESPECIFICATION[i])
     }
-    g.ball.move()
-    man.run(g)
-    g.draw(man)
-    g.draw(ball)
-    
-    
+    if (g.ball && g.man) {
+        console.log("11")
+        g.ball.move()
+        g.man.run(g)
+        g.draw(g.man)
+        g.draw(g.ball)
+    }
+
+
 }, 1000 / 30)
 
 let stop = document.getElementById("stopbutton")
@@ -185,13 +206,13 @@ fire.addEventListener('click', () => {
 })
 let submit = document.getElementById("submit")
 submit.addEventListener("click", (event) => {
-    let optionArr = document.querySelectorAll("input"),
+    let optionArr = document.querySelectorAll("input")
     key = document.querySelector("input[name='name']").value
 
     if (window.sessionStorage) {
-        if(key) {
+        if (key) {
             let obj = {}
-            optionArr.forEach( (v, i) => {
+            optionArr.forEach((v, i) => {
                 obj[v.name] = v.value
                 let regex = /[\s\S]*/
                 //v = v.outerHTML.replace(regex, "<p>Hello</p>")
@@ -202,22 +223,61 @@ submit.addEventListener("click", (event) => {
                 parent.removeChild(v)
                 parent.appendChild(el)
                 parent.className = "text-info"
-                
+
             })
             // TODO 完成球员生成面板的功能
+            obj = JSON.stringify(obj)
             window.sessionStorage.setItem(key, obj)
+            let data = window.sessionStorage.getItem(key)
+            console.log(JSON.parse(data))
             //console.log(window.sessionStorage.key())
+            let panelNode = submit.parentNode
+            panelNode.removeChild(submit)
+            let select = document.createElement("select")
+            panelNode.appendChild(select)
+            TEXTARRAY.forEach((currentValue, index) => {
+                let option = document.createElement('option')
+                option.value = index
+                option.innerHTML = currentValue
+                select.appendChild(option)
+            })
+            let execute = document.createElement("button")
+            execute.innerHTML = "执行"
+            execute.className = "execute"
+            execute.addEventListener("click", (event) => {
+                let index = document.getElementsByTagName("select")[0].selectedIndex
+                if (g.ball && g.man) {
+
+                } else {
+                    let data = JSON.parse(window.sessionStorage.getItem(key))
+                    for (let i in data) {
+                        data[i] = parseInt(data[i])
+                    }
+                    let {x,
+                        y,
+                        speed,
+                        explosiveNum,
+                        physical,
+                        power,
+                        technology,
+                        name} = data
+                    g.ball = new Ball(...POLICYARRAY[index][0])
+                    g.man = new Footballer(x,
+                        y,
+                        speed,
+                        explosiveNum,
+                        physical,
+                        power,
+                        technology,
+                        name)
+                }
+            })
+            panelNode.appendChild(execute)
         } else {
             throw new Error("请输入球员姓名")
         }
     } else {
         throw new Error("浏览器不支持sessionStorage存储")
     }
-    
+
 })
-
-
-
-
-
-

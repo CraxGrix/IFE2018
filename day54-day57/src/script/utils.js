@@ -7,12 +7,16 @@ export default class Utils {
      * @return {Object} 一个包含转换为平面直角坐标系坐标的对象
      */
     coordinateTransformation(x, y) {
+        x = x - 312.5
+            y = 220 - y
+        /** 
         if (x >= 50 && x <= 575 && y >= 50 && y <= 390) {
             x = x - 312.5
             y = 220 - y
         } else {
             throw new Error("坐标" + x + "," + y + "已超出球场实际范围，无法转换为平面直角坐标")
         }
+        */
         return {
             x,
             y,
@@ -26,12 +30,16 @@ export default class Utils {
      * @return {Object} 一个包含转换为网页坐标系坐标的对象
      */
     coordinateReduction(x, y) {
+        x = x < 0 ? 312.5 + x : x + 262.5 + 50
+        y = y > 0 ? 220 - y : Math.abs(y) + 220
+        /** 
         if (x <= 262.5 && x >= -262.5 && y <= 170 && y >= -170) {
             x = x < 0 ? 312.5 + x : x + 262.5 + 50
             y = y > 0 ? 220 - y : Math.abs(y) + 220
         } else {
             throw new Error("坐标" + x + "," + y + "已超出球场实际范围，无法还原为网页坐标")
         }
+        */
         return [
             x,
             y,

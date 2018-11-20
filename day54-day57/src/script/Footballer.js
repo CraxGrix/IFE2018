@@ -19,6 +19,8 @@ export default class Footballer {
         this.c = 0
         this.x = x
         this.y = y
+        this.kx = null
+        this.ky = null
         this.type = 'solid'
         this.status = true
         this.name = name
@@ -59,11 +61,11 @@ export default class Footballer {
             //console.log(this.x, this.y)
             // 根据勾股定理公式 c^2 = a^2 + b^2求出球员与目标之间的距离
             // TODO 移动 这个功能应抽象出来
-            let distance = Math.sqrt(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2))
+            this.distance = Math.sqrt(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2))
             console.log(this.targetX, this.targetY, this.y, this.y)
             //
             //console.log(distance, this.log)
-            if (distance > 12.5) {
+            if (this.distance > 12.5) {
                 //this.status = true
                 let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
                 // console.log(targetX, targetY, this.x, this.y)
@@ -105,52 +107,24 @@ export default class Footballer {
 
     }
 
-    updata(targetX, targetY) {
-        this.targetX = targetX
-        this.targetY = targetY
+    updata(destination) {
+        this.kx = destination[0]
+        this.ky = destination[1]
     }
 
     // 可以将踢球的行为简化为，根据球员的位置来计算最后给予的足球速度和目标位置。
     // 静止地踢运动的球，可以直接拿ball的target坐标和球员的当前坐标来计算期望方向的夹角。如果球的target坐标和它的当前坐标相差为0的话则判断球的状态是
     // 静止的。抑或是增加一个布尔值来表示足球的状态。
-    kick(Game, coordinate) {
-        let x1 = this.x
-        let y1 = this.y
-        let x2 = Game.ball.x
-        let y2 = Game.ball.y
-        let A = Window.utils.coordinateTransformation(x1, y1)
-        let B = Window.utils.coordinateTransformation(x2, y2)
-        let C = Window.utils.coordinateTransformation(Game.ball.x, Game.ball.y)
-        let D = Window.utils.coordinateTransformation(coordinate.x, coordinate.y)
-        // 判断球员是否在移动和足球是否静止
-        // XXX: 可以直接使用对象的状态来进行判断
-        if (this.status && Game.ball.status) {
-            let angle = Window.utils.calculatingAngleVector(A, B, C)
-            this.b = 1 + 1 / 180 * angle
-            angle = Window.utils.calculatingAngleVector(A, B, D)
-            let std_dev = 0.01 + (this.technology - 1) * (0.3 / 98)
-            let offsetCoefficient = Window.utils.getNumberInNormalDistribution(1, std_dev)
-            this.c = ((angle % 90) * (30 / 90)) * Math.abs(1 - offsetCoefficient)
-        } else if (this.status && !Game.ball.status) {
-            let angle = Window.utils.calculatingAngleVector(A, B, C)
-            this.b = 1 + 1 / 180 * angle
-            // XXX: 可以直接使用对象的状态来进行判断
-        } else if (!this.status && Game.ball.status) {
-            // 调用向量计算角度的函数 传入的参数为 球员期望坐标 球员当前坐标 足球期望坐标
-            let angle = Window.utils.calculatingAngleVector(A, B, D)
-            // 偏移量c最大值为30度 当角度达到90度时为最大，首先用90对角度取余，然后用余数乘 最大偏移量/90 得到的系数算出实际偏移量。
-            // 假设技术值为1时 方差为0.3 技术为99时 方差为0.01
-            let std_dev = 0.01 + (this.technology - 1) * (0.3 / 98)
-            let offsetCoefficient = Window.utils.getNumberInNormalDistribution(1, std_dev)
-            this.c = ((angle % 90) * (30 / 90)) * Math.abs(1 - offsetCoefficient)
+    kick(Game) {
+        
+        if (this.kx && this.ky && this.distance < 12.5) {
+           
+            // TODO 重置相关参数
+            this.distance, this.kx, this.ky = null
+            this.status = false
+            
         }
-        let angle = Window.utils.calculatingAngle(A, B)
-        let angleletiance = this.rateDifference * angle * this.b + this.c
-        let actualAngle = Math.round(Window.utils.getNumberInNormalDistribution(angle, angleletiance)) - angle
-        let [x, y] = Window.utils.coordinateReduction(...Window.utils.rotationCoordinates(A, D, actualAngle))
-        console.log(x, y)
-        Game.ball.updata(x, y, this.power * 5 / 30)
-        // TODO 重置相关系数
+
     }
 
 }

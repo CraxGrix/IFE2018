@@ -81,7 +81,7 @@ const TEXTARRAY = ['球员在球场中心向球门踢出足球', '球员从小�
  * 球场中心：262.5, 170 右球门：575, 220 右小禁区：560, 220 右上角球区： 567, 57 右点球区：505, 235  右上大禁区角：505, 138 边线:272, 50
  */
 const POSITIONCOORDINATES = {
-    centerMark: [262.5, 170],
+    centerMark: [312.5, 220],
     leftGoalPost: [575, 220],
     leftGoalArea: [560, 220],
     leftCornerArc: [567, 57],
@@ -189,6 +189,7 @@ let id = setInterval(() => {
         console.log("11")
         g.ball.move()
         g.man.run(g)
+        g.man.kick(g)
         g.draw(g.man)
         g.draw(g.ball)
     }
@@ -269,7 +270,8 @@ submit.addEventListener("click", (event) => {
                         physical,
                         power,
                         technology,
-                        name)
+                        name)                    
+                    g.man.updata(POLICYARRAY[index][1])
                 }
             })
             panelNode.appendChild(execute)

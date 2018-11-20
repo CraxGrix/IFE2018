@@ -11,7 +11,7 @@ export default class Ball {
         if (this.status) {
             this.distance = Math.sqrt(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2))
             //console.log(this.distance)
-            if (this.distance < 4 || this.speed === 0) {
+            if (this.distance < 4) {
                 this.status = false
                 this.targetX = this.x
                 this.targetY = this.y

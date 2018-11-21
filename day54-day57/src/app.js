@@ -186,12 +186,13 @@ let id = setInterval(() => {
         g.draw(COURSESPECIFICATION[i])
     }
     if (g.ball && g.man) {
-        console.log("11")
-        g.ball.move()
-        g.man.run(g)
-        g.man.kick(g)
+        //console.log(g.ball, g.man)
         g.draw(g.man)
         g.draw(g.ball)
+        g.ball.move()
+        g.man.run(g)
+        //g.man.kick(g)
+        
     }
 
 

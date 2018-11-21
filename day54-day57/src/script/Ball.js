@@ -35,3 +35,6 @@ export default class Ball {
         this.status = true
     }
 }
+
+
+

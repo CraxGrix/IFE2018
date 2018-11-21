@@ -8,7 +8,7 @@ export default class Utils {
      */
     coordinateTransformation(x, y) {
         x = x - 312.5
-            y = 220 - y
+        y = 220 - y
         /** 
         if (x >= 50 && x <= 575 && y >= 50 && y <= 390) {
             x = x - 312.5
@@ -145,9 +145,102 @@ export default class Utils {
             x: x,
             y: y,
         }
+    }
+    /**
+     * 获取运动员的运动路径坐标
+     * @param {Object} Footballer 运动员对象
+     * @returns {Array} 包含运动员网页坐标x, y,帧数timer的二维数组
+     */
+    _getMotionPath(Footballer) {
+        // TODO FIX 未考虑运动员体力因素
+        let targetX = Footballer.targetX,
+            targetY = Footballer.targetY,
+            x = Footballer.x,
+            y = Footballer.y,
+            distance = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2)),
+            pathArray = [],
+            timer = 0
+        while (distance < 12.5) {
+            pathArray.push([x, y, timer])
+            let deg = Math.atan2(targetY - y, targetX - x),
+                sin = Math.sin(deg),
+                cos = Math.cos(deg),
+                vx = Footballer.v * cos,
+                vy = Footballer.v * sin
+            timer++
+            x += vx
+            y += vy
+            distance = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2))
+        }
+        return pathArray
+    }
+
+    /**
+     * 根据运动员的行进轨迹预判足球落点
+     * @param {Object} Footballer 运动员对象
+     * @param {Object} Ball 足球对象
+     * @returns {Array} 足球落点的网页坐标数组，包含x, y, timer
+     */
+    getPredictedCoordinates(Footballer, Ball) {
+        let pathArray = this._getMotionPath(Footballer)
+            pathArray.map((value, index, array) => {
+                let speed = Footballer.power * 5 / 30,
+                    c1 = {
+                        x: Ball.x,
+                        y: Ball.y
+                    },
+                    c2 = {
+                      x: value[0],
+                      y: value[1]  
+                    }
+                for (let i = 0; i < value[2]; i++) {
+                    let vx, vy = this.getMovementAmount(c1, c2, speed)
+                    c1.x += vx
+                    c1.y += vy
+                    speed = speed - speed * 0.02
+                }
+                return c1
+            }).findIndex((element, index, array) => {
+                let c2 = {
+                    x: pathArray[index][0],
+                    y: pathArray[index][1]
+                }
+                return Window.Utils.getDistance(c1, c2) < 12.5 ? true : false
+            })
+    }
+    /**
+     * 获取两点之间的距离
+     * @param {Object} c1 坐标对象
+     * @param {Object} c2 坐标对象
+     * @returns {Number} 距离数值
+     */
+    getDistance(c1,c2) {
+        return Math.sqrt(Math.pow(c2.x-c1.x, 2) + Math.pow(c2.y - c1.y, 2))
+    }
+    /**
+     * 获取每帧移动的网页坐标常量
+     * @param {Object} c1 坐标对象 
+     * @param {Object} c2 坐标对象
+     * @param {Number} v 速度
+     * @returns {Number} 两个轴的坐标运动常量
+     */
+    getMovementAmount(c1, c2, v) {
+        let x1 = c1.x,
+            y1 = c1.y,
+            x2 = c2.x,
+            y2 = c2.y,
+            deg = Math.atan2(y2 - y1, x2 - x1),
+            sin = Math.sin(deg),
+            cos = Math.cos(deg),
+            vx = v * cos,
+            vy = v * sin
+
+        return vx, vy    
 
     }
 
+
+    
 
 
 }

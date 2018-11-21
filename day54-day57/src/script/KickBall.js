@@ -83,7 +83,7 @@ class PassBall extends KickBall {
         if (!otherFootballer.status) {
             super.killBall(otherFootballer)
         } else {
-            // TODO 追及相遇问题
+            // 传入新的足球运动员super.killBall(Window.utils.getPredictedCoordinates())
         }
     }
 }

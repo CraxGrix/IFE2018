@@ -1,5 +1,6 @@
 import Ball from "./Ball";
 
+// TODO FIX 运动员坐标x值异常
 /**
  *  TODO:
  *  设置参数可视化面板以便于调节更加真实的参数
@@ -43,7 +44,6 @@ export default class Footballer {
         this.rateDifference = (30 - (this.technology - 1) * (25 / 98)) / 100
         this.power = 5 + (power - 1) * (45 / 98)
         this.powerletiance = this.power * this.rateDifference
-
     }
     /** 
      * 每个球员的run方法接受一个目的地座标的数组，通过球员各项身体数值的计算得出下一帧球员应该出现的位置
@@ -61,25 +61,21 @@ export default class Footballer {
             //console.log(this.x, this.y)
             // 根据勾股定理公式 c^2 = a^2 + b^2求出球员与目标之间的距离
             // TODO 移动 这个功能应抽象出来
-            this.distance = Math.sqrt(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2))
-            console.log(this.targetX, this.targetY, this.y, this.y)
-            //
-            //console.log(distance, this.log)
+            let c1 = {
+                    x: this.x,
+                    y: this.y
+                },
+                c2 = {
+                    x: this.targetX,
+                    y: this.targetY
+                }
+            
+            this.distance = Window.utils.getDistance(c1, c2)
+          
             if (this.distance > 12.5) {
-                //this.status = true
-                let deg = Math.atan2(this.targetY - this.y, this.targetX - this.x)
-                // console.log(targetX, targetY, this.x, this.y)
-                // Math.atan2方法接收一组座标返回弧度值
-                //console.log(deg)
-                let sin = Math.sin(deg)
-                let cos = Math.cos(deg)
-                let vx = this.v * cos
-                let vy = this.v * sin
-
+                let vx, vy = Window.utils.getMovementAmount(c1, c2, this.v)
                 this.x += vx
                 this.y += vy
-                // console.log(this.x, this.y)
-                // Game.draw(this)
                 if (this.v < this.VMax * 5 / (1000 / 30)) {
                     this.log++
                     this.v += this.speed
@@ -116,13 +112,13 @@ export default class Footballer {
     // 静止地踢运动的球，可以直接拿ball的target坐标和球员的当前坐标来计算期望方向的夹角。如果球的target坐标和它的当前坐标相差为0的话则判断球的状态是
     // 静止的。抑或是增加一个布尔值来表示足球的状态。
     kick(Game) {
-        
+
         if (this.kx && this.ky && this.distance < 12.5) {
-           
+
             // TODO 重置相关参数
             this.distance, this.kx, this.ky = null
             this.status = false
-            
+
         }
 
     }

@@ -1,7 +1,11 @@
 export default class KickBall {
-    constructor() {}
+    constructor(Game, Ball, Footballer) {
+        this.Game = Game
+        this.Ball = Ball
+        this.Footballer = Footballer
+    }
 
-    killBall(target) {
+    killBall() {
         // 踢球可以理解为 计算差值过后传递实际要到达的坐标给ball，让ball进行移动。
         let x1 = this.Footballer.x
         let y1 = this.Footballer.y
@@ -10,7 +14,7 @@ export default class KickBall {
         let A = Window.utils.coordinateTransformation(x1, y1)
         let B = Window.utils.coordinateTransformation(x2, y2)
         let C = Window.utils.coordinateTransformation(this.Ball.targetX, this.Ball.targetY)
-        let D = Window.utils.coordinateTransformation(target.x, target.y)
+        let D = Window.utils.coordinateTransformation(this.Footballer.kx, this.Footballer.ky)
         // 判断球员是否在移动和足球是否静止
         // XXX: 可以直接使用对象的状态来进行判断
         if (this.Footballer.status && this.Ball.status) {
@@ -39,6 +43,7 @@ export default class KickBall {
         let actualAngle = Math.round(Window.utils.getNumberInNormalDistribution(angle, angleletiance)) - angle
         let [x, y] = Window.utils.coordinateReduction(...Window.utils.rotationCoordinates(A, D, actualAngle))
         this.Ball.updata(x, y, this.Footballer.power * 5 / 30)
+        this.Footballer.capture = false
     }
 
 }

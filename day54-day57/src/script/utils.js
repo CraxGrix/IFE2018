@@ -183,30 +183,30 @@ export default class Utils {
      */
     getPredictedCoordinates(Footballer, Ball) {
         let pathArray = this._getMotionPath(Footballer)
-            pathArray.map((value, index, array) => {
-                let speed = Footballer.power * 5 / 30,
-                    c1 = {
-                        x: Ball.x,
-                        y: Ball.y
-                    },
-                    c2 = {
-                      x: value[0],
-                      y: value[1]  
-                    }
-                for (let i = 0; i < value[2]; i++) {
-                    let vx, vy = this.getMovementAmount(c1, c2, speed)
-                    c1.x += vx
-                    c1.y += vy
-                    speed = speed - speed * 0.02
+        pathArray.map((value, index, array) => {
+            let speed = Footballer.power * 5 / 30,
+                c1 = {
+                    x: Ball.x,
+                    y: Ball.y
+                },
+                c2 = {
+                    x: value[0],
+                    y: value[1]
                 }
-                return c1
-            }).findIndex((element, index, array) => {
-                let c2 = {
-                    x: pathArray[index][0],
-                    y: pathArray[index][1]
-                }
-                return Window.Utils.getDistance(c1, c2) < 12.5 ? true : false
-            })
+            for (let i = 0; i < value[2]; i++) {
+                let vx, vy = this.getMovementAmount(c1, c2, speed)
+                c1.x += vx
+                c1.y += vy
+                speed = speed - speed * 0.02
+            }
+            return c1
+        }).findIndex((element, index, array) => {
+            let c2 = {
+                x: pathArray[index][0],
+                y: pathArray[index][1]
+            }
+            return Window.Utils.getDistance(c1, c2) < 12.5 ? true : false
+        })
     }
     /**
      * 获取两点之间的距离
@@ -214,8 +214,8 @@ export default class Utils {
      * @param {Object} c2 坐标对象
      * @returns {Number} 距离数值
      */
-    getDistance(c1,c2) {
-        return Math.sqrt(Math.pow(c2.x-c1.x, 2) + Math.pow(c2.y - c1.y, 2))
+    getDistance(c1, c2) {
+        return Math.sqrt(Math.pow(c2.x - c1.x, 2) + Math.pow(c2.y - c1.y, 2))
     }
     /**
      * 获取每帧移动的网页坐标常量
@@ -225,22 +225,27 @@ export default class Utils {
      * @returns {Number} 两个轴的坐标运动常量
      */
     getMovementAmount(c1, c2, v) {
+        let [sin, cos] = this.getSinAndCos(c1, c2),
+        vx = v * cos,
+            vy = v * sin
+
+        return [vx, vy]
+
+    }
+
+    getSinAndCos(c1, c2) {
         let x1 = c1.x,
             y1 = c1.y,
             x2 = c2.x,
             y2 = c2.y,
             deg = Math.atan2(y2 - y1, x2 - x1),
             sin = Math.sin(deg),
-            cos = Math.cos(deg),
-            vx = v * cos,
-            vy = v * sin
-
-        return vx, vy    
-
+            cos = Math.cos(deg)
+        return [sin, cos]
     }
 
 
-    
+
 
 
 }

@@ -28,7 +28,7 @@ export default class Ball {
                 [this.sin, this.cos] = Window.utils.getSinAndCos(c1, c2)
             }
             let vx = this.speed * this.cos,
-            vy = this.speed * this.sin
+                vy = this.speed * this.sin
             this.x += vx
             this.y += vy
             this.speed = this.speed - this.speed * 0.02

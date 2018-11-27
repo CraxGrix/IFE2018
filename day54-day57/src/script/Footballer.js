@@ -1,6 +1,5 @@
 import Ball from "./Ball";
 
-// TODO FIX 运动员坐标x值异常
 /**
  *  TODO:
  *  设置参数可视化面板以便于调节更加真实的参数

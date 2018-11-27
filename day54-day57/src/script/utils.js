@@ -232,7 +232,12 @@ export default class Utils {
         return [vx, vy]
 
     }
-
+    /**
+     * 获取两点之间的sin和cos值
+     * @param {Object} c1 坐标对象
+     * @param {Object} c2 坐标对象
+     * @returns 包含sin和cos的数组
+     */
     getSinAndCos(c1, c2) {
         let x1 = c1.x,
             y1 = c1.y,
@@ -242,6 +247,18 @@ export default class Utils {
             sin = Math.sin(deg),
             cos = Math.cos(deg)
         return [sin, cos]
+    }
+    /**
+     * 获取状态的字符简称
+     * @param {Object} Footballer 运动员对象
+     * @param {Object} Ball 足球对象
+     * @returns 字符简称
+     */
+    getStatus(Footballer, Ball) {
+        let s1 = Footballer.status
+        let s2 = Ball.status
+        let str = s1 && s2 ? "RAR" : s1 && !s2 ? "RAS" : !s1 && s2 ? "SAR" : "SAS"
+        return str
     }
 
 

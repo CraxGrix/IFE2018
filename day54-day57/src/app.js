@@ -6,7 +6,7 @@ import KickBall from './script/KickBall'
 
 const log = console.log.bind(console)
 Window.utils = new Utils()
-let execute,
+let execute, 
     key
 // TODO 移动至config配置文件当中
 const COURSESPECIFICATION = {
@@ -116,6 +116,7 @@ class Game {
         this.canvas.width = this.canvas.width * this.ratio
         this.canvas.height = this.canvas.height * this.ratio
         this.context.scale(this.ratio, this.ratio)
+        // XXX: 更好的写法参照KickBall类
         this.drawStrategies = (function (context) {
             return {
                 'site': function (obj) {
@@ -191,7 +192,13 @@ let id = setInterval(() => {
         g.draw(g.man)
         g.draw(g.ball)
         if(g.man.capture) {
-            new KickBall(g, g.ball, g.man).killBall()
+            new KickBall(g, g.ball, g.man).killBall(Window.utils.getStatus(g.man, g.ball), g.man, {
+                x: g.man.kx,
+                y: g.man.ky
+            }, g.ball, {
+                x: g.man.targetX,
+                y: g.man.targetY
+            })
         }
         g.ball.move()
         g.man.run(g)        
@@ -265,7 +272,7 @@ submit.addEventListener("click", (event) => {
                         power,
                         technology,
                         name} = data
-                        console.log(POLICYARRAY)
+                        console.log(POLICYARRAY) 
                     g.ball = new Ball(...POLICYARRAY[index][0])
                     g.man = new Footballer(x,
                         y,

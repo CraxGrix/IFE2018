@@ -17,8 +17,7 @@ const config = {
       inject: 'body' // js插入的位置
     }),
     new webpack.HotModuleReplacementPlugin()
-  ],
-  devtool:"source-map"
+  ]
 }
 
 if (isDev) {

@@ -2,7 +2,6 @@ import Court from './script/Court'
 import Footballer from './script/Footballer'
 import Ball from './script/Ball'
 import Utils from './script/utils'
-import KickBall from './script/KickBall'
 
 const log = console.log.bind(console)
 Window.utils = new Utils()
@@ -96,7 +95,7 @@ const POLICYARRAY = [
     [POSITIONCOORDINATES.leftGoalArea, POSITIONCOORDINATES.centerMark],
     [POSITIONCOORDINATES.leftCornerArc, POSITIONCOORDINATES.leftPenaltyMark],
     [POSITIONCOORDINATES.leftPenaltyAreaAngle, POSITIONCOORDINATES.leftGoalPost],
-    [POSITIONCOORDINATES.leftPenaltyMark, POSITIONCOORDINATES.sideLine],
+    [POSITIONCOORDINATES.leftPenaltyArea, POSITIONCOORDINATES.sideLine],
 
 ]
 
@@ -190,11 +189,10 @@ let id = setInterval(() => {
         //console.log(g.ball, g.man)
         g.draw(g.man)
         g.draw(g.ball)
-        if(g.man.capture) {
-            new KickBall(g, g.ball, g.man).killBall()
-        }
         g.ball.move()
-        g.man.run(g)        
+        g.man.run(g)
+        //g.man.kick(g)
+        
     }
 
 
@@ -265,7 +263,6 @@ submit.addEventListener("click", (event) => {
                         power,
                         technology,
                         name} = data
-                        console.log(POLICYARRAY)
                     g.ball = new Ball(...POLICYARRAY[index][0])
                     g.man = new Footballer(x,
                         y,

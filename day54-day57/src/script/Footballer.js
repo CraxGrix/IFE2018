@@ -22,7 +22,6 @@ export default class Footballer {
         this.y = y
         this.kx = null
         this.ky = null
-        this.capture = false
         this.type = 'solid'
         this.status = true
         this.name = name
@@ -74,7 +73,7 @@ export default class Footballer {
             this.distance = Window.utils.getDistance(c1, c2)
           
             if (this.distance > 12.5) {
-                let [vx, vy] = Window.utils.getMovementAmount(c1, c2, this.v)
+                let vx, vy = Window.utils.getMovementAmount(c1, c2, this.v)
                 this.x += vx
                 this.y += vy
                 if (this.v < this.VMax * 5 / (1000 / 30)) {
@@ -95,7 +94,6 @@ export default class Footballer {
                 }
             } else if (this.status) {
                 //this.kick(Game, Window.utils.randomCoordinateGeneration())
-                this.capture = true
                 this.status = false
                 //Game.ball.capture = true
                 this.v = this.speed

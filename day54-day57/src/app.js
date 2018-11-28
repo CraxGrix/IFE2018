@@ -6,7 +6,7 @@ import {PassBall} from './script/KickBall'
 
 const log = console.log.bind(console)
 Window.utils = new Utils()
-let execute,
+let execute, 
     key
 // TODO 移动至config配置文件当中
 const COURSESPECIFICATION = {
@@ -128,6 +128,7 @@ class Game {
         this.canvas.width = this.canvas.width * this.ratio
         this.canvas.height = this.canvas.height * this.ratio
         this.context.scale(this.ratio, this.ratio)
+        // XXX: 更好的写法参照KickBall类
         this.drawStrategies = (function (context) {
             return {
                 'site': function (obj) {

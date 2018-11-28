@@ -5,6 +5,24 @@ export class KickBall {
         this.Ball = Ball
         this.Footballer = Footballer
     }
+    /**
+     * 
+     * @param {String} status 足球运动员和足球的状态简称
+     * @param {Object} A 球员网页坐标对象
+     * @param {Object} B 足球落点网页坐标对象
+     * @param {Object} C 足球网页坐标对象
+     * @param {Object} D 球员运动终点网页坐标对象
+     */
+    killBall(status, A, B, C, D) {
+        let C1 = Window.utils.coordinateTransformation(A.x, A.y)
+        
+        let C2 = Window.utils.coordinateTransformation(B.x, B.y)
+        // ball
+        let C3 = typeof C !== "undefined" ? Window.utils.coordinateTransformation(C.x, C.y) : NaN
+        // k
+        let C4 = typeof D !== "indefined" ? Window.utils.coordinateTransformation(D.x, D.y) : NaN
+        status = "MAS"
+
 
     killBall(target=null) {
         // 踢球可以理解为 计算差值过后传递实际要到达的坐标给ball，让ball进行移动。
@@ -21,6 +39,7 @@ export class KickBall {
         }
         // 判断球员是否在移动和足球是否静止
         // XXX: 可以直接使用对象的状态来进行判断
+        /** 
         if (this.Footballer.status && this.Ball.status) {
             console.log("11")
             let angle = Window.utils.calculatingAngleVector(A, B, C)

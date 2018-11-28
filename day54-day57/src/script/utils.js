@@ -255,6 +255,18 @@ export default class Utils {
             cos = Math.cos(deg)
         return [sin, cos]
     }
+    /**
+     * 获取状态的字符简称
+     * @param {Object} Footballer 运动员对象
+     * @param {Object} Ball 足球对象
+     * @returns 字符简称
+     */
+    getStatus(Footballer, Ball) {
+        let s1 = Footballer.status
+        let s2 = Ball.status
+        let str = s1 && s2 ? "RAR" : s1 && !s2 ? "RAS" : !s1 && s2 ? "SAR" : "SAS"
+        return str
+    }
 
 
     

@@ -1,5 +1,4 @@
-import Ball from "./Ball";
-
+import {Stopping, KickBall} from "./KickBall"
 // TODO FIX 运动员坐标x值异常
 /**
  *  TODO:
@@ -53,8 +52,8 @@ export default class Footballer {
         if (this.status) {
             //console.log(this.v)
 
-            this.targetX = Game.ball.x
-            this.targetY = Game.ball.y
+            //this.targetX = Game.ball.x
+            //this.targetY = Game.ball.y
             //let targetArr = Game.ball.calculationTrack()
             //console.log(targetArr)
 
@@ -73,14 +72,19 @@ export default class Footballer {
             this.distance = Window.utils.getDistance(c1, c2)
           
             if (this.distance > 12.5) {
-                let vx, vy = Window.utils.getMovementAmount(c1, c2, this.v)
+                if(Window.utils.getDistance(c1, {
+                    x: Game.ball.x,
+                    y: Game.ball.y
+                }) < 12.5) {
+                    let stop = new Stopping(Game, Game.ball, this)
+                    stop.stoppingBall()
+                }
+                let [vx, vy] = Window.utils.getMovementAmount(c1, c2, this.v)
                 this.x += vx
                 this.y += vy
                 if (this.v < this.VMax * 5 / (1000 / 30)) {
                     this.log++
                     this.v += this.speed
-                    //console.log(this.log)
-                    //console.log(this.v, this.VMax / (1000 / 30) * 5)
                 } else {
                     //console.log(Math.sqrt(Math.pow(100 - this.x, 2) + Math.pow(100 - this.y, 2)), "起点距离")
                     // 体力计时器
@@ -92,9 +96,14 @@ export default class Footballer {
                         }, this.inMaxSpeedKeepSecends * 1000)
                     }
                 }
-            } else if (this.status) {
-                //this.kick(Game, Window.utils.randomCoordinateGeneration())
+            } else {
+                if(this.kx !== null) {
+                    let i = new KickBall(Game, Game.ball, this)
+                    i.killBall()
+                }
                 this.status = false
+                this.kx = null
+                this.ky = null
                 //Game.ball.capture = true
                 this.v = this.speed
             }
@@ -108,18 +117,8 @@ export default class Footballer {
         this.ky = destination[1]
     }
 
-    // 可以将踢球的行为简化为，根据球员的位置来计算最后给予的足球速度和目标位置。
-    // 静止地踢运动的球，可以直接拿ball的target坐标和球员的当前坐标来计算期望方向的夹角。如果球的target坐标和它的当前坐标相差为0的话则判断球的状态是
-    // 静止的。抑或是增加一个布尔值来表示足球的状态。
-    kick(Game) {
+    kick() {
 
-        if (this.kx && this.ky && this.distance < 12.5) {
-
-            // TODO 重置相关参数
-            this.distance, this.kx, this.ky = null
-            this.status = false
-
-        }
 
     }
 

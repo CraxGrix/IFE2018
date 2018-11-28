@@ -158,15 +158,15 @@ export default class Utils {
             x = Footballer.x,
             y = Footballer.y,
             distance = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2)),
-            pathArray = [],
+            pathArray = new Array(),
             timer = 0
-        while (distance < 12.5) {
+        while (distance > 12.5) {
             pathArray.push([x, y, timer])
             let deg = Math.atan2(targetY - y, targetX - x),
                 sin = Math.sin(deg),
                 cos = Math.cos(deg),
-                vx = Footballer.v * cos,
-                vy = Footballer.v * sin
+                vx = Footballer.VMax * 5 / (1000 / 30) * cos,
+                vy = Footballer.VMax * 5 / (1000 / 30) * sin
             timer++
             x += vx
             y += vy
@@ -183,6 +183,7 @@ export default class Utils {
      */
     getPredictedCoordinates(Footballer, Ball) {
         let pathArray = this._getMotionPath(Footballer)
+        console.log(pathArray)
             pathArray.map((value, index, array) => {
                 let speed = Footballer.power * 5 / 30,
                     c1 = {
@@ -235,8 +236,24 @@ export default class Utils {
             vx = v * cos,
             vy = v * sin
 
-        return vx, vy    
+        return [vx, vy]  
 
+    }
+       /**
+     * 获取两点之间的sin和cos值
+     * @param {Object} c1 坐标对象
+     * @param {Object} c2 坐标对象
+     * @returns 包含sin和cos的数组
+     */
+    getSinAndCos(c1, c2) {
+        let x1 = c1.x,
+            y1 = c1.y,
+            x2 = c2.x,
+            y2 = c2.y,
+            deg = Math.atan2(y2 - y1, x2 - x1),
+            sin = Math.sin(deg),
+            cos = Math.cos(deg)
+        return [sin, cos]
     }
 
 

@@ -2,6 +2,7 @@ import Court from './script/Court'
 import Footballer from './script/Footballer'
 import Ball from './script/Ball'
 import Utils from './script/utils'
+import {PassBall} from './script/KickBall'
 
 const log = console.log.bind(console)
 Window.utils = new Utils()
@@ -76,7 +77,7 @@ const COURSESPECIFICATION = {
         size: [312.5, 221.25, 45.75, 0.5 * Math.PI, 2.5 * Math.PI, false],
     },
 }
-const TEXTARRAY = ['球员在球场中心向球门踢出足球', '球员从小禁区向球场中心踢出足球', '球员从角球区向点球点踢出足球', '球员从大禁区角附近，向球门踢出足球', '球员从本方禁区附近向对方半场边线踢出足球']
+const TEXTARRAY = ['球员在球场中心向球门踢出足球', '球员从小禁区向球场中心踢出足球', '球员从角球区向点球点踢出足球', '球员从大禁区角附近，向球门踢出足球', '球员从本方禁区附近向对方半场边线踢出足球', "球员在运动中实现停球", "传球给另外一个球员"]
 /**
  * 球场中心：262.5, 170 右球门：575, 220 右小禁区：560, 220 右上角球区： 567, 57 右点球区：505, 235  右上大禁区角：505, 138 边线:272, 50
  */
@@ -95,7 +96,19 @@ const POLICYARRAY = [
     [POSITIONCOORDINATES.leftGoalArea, POSITIONCOORDINATES.centerMark],
     [POSITIONCOORDINATES.leftCornerArc, POSITIONCOORDINATES.leftPenaltyMark],
     [POSITIONCOORDINATES.leftPenaltyAreaAngle, POSITIONCOORDINATES.leftGoalPost],
-    [POSITIONCOORDINATES.leftPenaltyArea, POSITIONCOORDINATES.sideLine],
+    [POSITIONCOORDINATES.leftPenaltyAreaAngle, POSITIONCOORDINATES.sideLine],
+    {
+        x: POSITIONCOORDINATES.sideLine[0],
+        y: POSITIONCOORDINATES.sideLine[1],
+        targetX: POSITIONCOORDINATES.centerMark[0],
+        targetY: POSITIONCOORDINATES.centerMark[1]
+    },
+    {
+        x: POSITIONCOORDINATES.sideLine[0],
+        y: POSITIONCOORDINATES.sideLine[1],
+        targetX: POSITIONCOORDINATES.centerMark[0],
+        targetY: POSITIONCOORDINATES.centerMark[1]
+    }
 
 ]
 
@@ -188,9 +201,13 @@ let id = setInterval(() => {
     if (g.ball && g.man) {
         //console.log(g.ball, g.man)
         g.draw(g.man)
-        g.draw(g.ball)
+        g.draw(g.ball) 
         g.ball.move()
         g.man.run(g)
+        if(g.otherMan) {
+            g.draw(g.otherMan)
+            g.otherMan.run(g)
+        }
         //g.man.kick(g)
         
     }
@@ -231,8 +248,6 @@ submit.addEventListener("click", (event) => {
             obj = JSON.stringify(obj)
             window.sessionStorage.setItem(key, obj)
             let data = window.sessionStorage.getItem(key)
-            console.log(JSON.parse(data))
-            //console.log(window.sessionStorage.key())
             let panelNode = submit.parentNode
             panelNode.removeChild(submit)
             let select = document.createElement("select")
@@ -263,16 +278,58 @@ submit.addEventListener("click", (event) => {
                         power,
                         technology,
                         name} = data
-                    g.ball = new Ball(...POLICYARRAY[index][0])
-                    g.man = new Footballer(x,
-                        y,
-                        speed,
-                        explosiveNum,
-                        physical,
-                        power,
-                        technology,
-                        name)                    
-                    g.man.updata(POLICYARRAY[index][1])
+                    if(index < 5) {
+                        g.ball = new Ball(...POLICYARRAY[index][0])
+                        g.man = new Footballer(x,
+                            y,
+                            speed,
+                            explosiveNum,
+                            physical,
+                            power,
+                            technology,
+                            name)
+                        g.man.targetX = POLICYARRAY[index][0][0] 
+                        g.man.targetY = POLICYARRAY[index][0][1]           
+                        g.man.updata(POLICYARRAY[index][1])
+                    } else if(index === 5) {
+                        g.man = new Footballer(x,
+                            y,
+                            speed,
+                            explosiveNum,
+                            physical,
+                            power,
+                            technology,
+                            name)
+                        g.man.targetX = POLICYARRAY[index].targetX
+                        g.man.targetY = POLICYARRAY[index].targetY
+                        g.ball = new Ball(60, 65)
+
+                    } else {
+                        g.man = new Footballer(x,
+                            y,
+                            speed,
+                            explosiveNum,
+                            physical,
+                            power,
+                            technology,
+                            name)
+                        g.man.targetX = POLICYARRAY[index].targetX
+                        g.man.targetY = POLICYARRAY[index].targetY
+                        g.ball = new Ball(60, 65)
+                        g.otherMan = new Footballer(x + 100,
+                            y + 100,
+                            speed,
+                            explosiveNum,
+                            physical,
+                            power,
+                            technology,
+                            name)
+                    }
+                    g.otherMan.targetX = POLICYARRAY[index].targetX + 100
+                    g.otherMan.targetY = POLICYARRAY[index].targetY + 100
+                    let pass = new PassBall(g, g.ball, g.man)
+                    pass.passBall(g.otherMan, g.ball)
+                    
                 }
             })
             panelNode.appendChild(execute)

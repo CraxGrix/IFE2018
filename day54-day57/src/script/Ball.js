@@ -24,7 +24,6 @@ export default class Ball {
             this.x += vx
             this.y += vy
             this.speed = this.speed - this.speed * 0.02
-            console.log(this.speed)
         }
 
     }
